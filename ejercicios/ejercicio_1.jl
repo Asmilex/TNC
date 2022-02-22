@@ -7,6 +7,7 @@ using InteractiveUtils
 # ╔═╡ 67f4e16e-7acd-4d59-b7ff-eb13b1963e35
 begin
 	using PlutoUI
+	using Primes
 end
 
 # ╔═╡ c4f69621-11c6-4b82-a182-3cd177396f92
@@ -109,13 +110,18 @@ md"""
 Como podemos ver, ninguna de las ejecuciones acaba dando 1. Esto nos dice que n es compuesto. 
 """
 
+# ╔═╡ ffe749c8-7801-4298-af92-56f0ff510232
+Primes.factor(n)
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+Primes = "27ebfcd6-29c5-5fa9-bf4b-fb8fc14df3ae"
 
 [compat]
 PlutoUI = "~0.7.34"
+Primes = "~0.5.1"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -254,6 +260,11 @@ git-tree-sha1 = "8979e9802b4ac3d58c503a20f2824ad67f9074dd"
 uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 version = "0.7.34"
 
+[[deps.Primes]]
+git-tree-sha1 = "984a3ee07d47d401e0b823b7d30546792439070a"
+uuid = "27ebfcd6-29c5-5fa9-bf4b-fb8fc14df3ae"
+version = "0.5.1"
+
 [[deps.Printf]]
 deps = ["Unicode"]
 uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
@@ -326,7 +337,7 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 
 # ╔═╡ Cell order:
 # ╟─c4f69621-11c6-4b82-a182-3cd177396f92
-# ╟─67f4e16e-7acd-4d59-b7ff-eb13b1963e35
+# ╠═67f4e16e-7acd-4d59-b7ff-eb13b1963e35
 # ╠═4674d500-933e-11ec-319a-2bc8ee4dec72
 # ╠═8c09c59b-80ca-4257-91d4-4b0ce67f04dc
 # ╠═81c3e4ce-251a-4417-92e7-8ab9d06bccb9
@@ -334,5 +345,6 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═6aafc7d5-25e3-4f26-aab4-b8e838067887
 # ╠═0e4a2664-8bf7-4c5f-9ffd-c1e5e804f23c
 # ╟─379cc1bd-4c21-4bee-acff-aee05d477606
+# ╠═ffe749c8-7801-4298-af92-56f0ff510232
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
