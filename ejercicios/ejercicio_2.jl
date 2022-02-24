@@ -109,8 +109,8 @@ md"Y por lo tanto, $\Big(\frac{11}{n}\Big) = 1$"
 # ╔═╡ 877b751d-921a-4f82-b39a-eae049862815
 md"## Símbolo de Jacobi"
 
-# ╔═╡ 3a9e0c59-26b5-4ce3-a037-0875be355e84
-md"Usaremos el algoritmo del ejercicio 1 modificado para este ejercicio"
+# ╔═╡ 516c0ed3-5106-4650-ad35-675168a0a5a3
+md"Comprobaremos los resultados anteriores con el algoritmo proporcionado en los apuntes"
 
 # ╔═╡ af5e9810-9a49-48fb-85de-82225d2b0ece
 function simbolo_jacobi(a, n)
@@ -155,39 +155,15 @@ with_terminal() do
 	end
 end
 
-# ╔═╡ b4288622-89d3-48db-b973-110b7dd4ce0a
-
-
 # ╔═╡ ca8df1e0-fa82-434b-8e24-9f8c60cf5690
 md"## Posibles primos de Euler"
-
-# ╔═╡ bf7ca4d9-7b58-4550-9e2d-a74ce009741b
-function fast_exp_left_to_right(a, n::Int64)
-    binario = reverse(digits(n-1, base = 2))
-
-    acu = 1
-    c   = 0
-
-    for (i, e_i) in enumerate(binario)
-        acu = mod(acu * acu, n)
-        c   = c * 2
-
-        if e_i == 1
-            acu = mod(acu * a, n)
-            c   = c + 1
-        end
-    end
-
-    return acu
-end
-
 
 # ╔═╡ d7ea76b8-a788-4237-a5ff-fb1fe4685420
 posibles_primos = Vector{Int64}()
 
 # ╔═╡ 12aa0271-fcec-4f14-86bf-f5d5bcf5ebdc
 for a in [2, 3, 5, 7, 11]
-	if fast_exp_left_to_right(a, m) == 1
+	if powermod(a, n-1, n) == 1
 		push!(posibles_primos, a)
 	end
 end
@@ -200,17 +176,32 @@ posibles_primos
 
 # ╔═╡ d6f01108-1b9c-49e3-89a5-51b09d6d07a1
 md"""
-Decimos que si n es primo, entonces $\big(\frac{a}{n}\big) \equiv a^{(n-1)/2}\text{mod}n$
+Decimos que si n es primo, entonces $\big(\frac{a}{n}\big) \equiv a^{(n-1)/2}\text{ mod }n$
 """
+
+# ╔═╡ d3591d04-d300-467c-9fdf-2b912e9e6130
+posibles_primos_euler = Vector{Int64}()
 
 # ╔═╡ 5392da90-c4d6-4723-b6f5-576e201edafc
 with_terminal() do
 	for a in posibles_primos
-		if a != 2
-			println("(a/m) = ", simbolo_jacobi(a, m), " =? ", fast_exp_left_to_right(a, (m-1)/2))
+		jacobi = simbolo_jacobi(a, n)
+		exponencial = powermod(a, div(n-1, 2), n)
+		
+		println("(", a, "/n) = ", jacobi, " =? ", exponencial, " = ", a, "^((n - 1)/2) mod n")
+
+		if jacobi == exponencial
+			push!(posibles_primos_euler, a)
 		end
+			
 	end
 end
+
+# ╔═╡ f5199680-5116-4263-a8b1-40a3fb6f11c4
+md"Por lo tanto, tenemos tres posibles primos de Euler:"
+
+# ╔═╡ bcc7ff02-9639-4d16-9b2b-915acd87cd11
+posibles_primos_euler
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -430,9 +421,9 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╔═╡ Cell order:
 # ╟─328a2950-9343-11ec-28ec-7139a5c072a1
 # ╠═71d06108-4871-4c8e-a1d2-fea490935048
-# ╟─a61850f7-32bc-4463-9e28-9117ed578f8f
+# ╠═a61850f7-32bc-4463-9e28-9117ed578f8f
 # ╟─777b4e82-d446-4e88-8a01-505d148a6371
-# ╠═ff475c8f-5192-4821-ad48-cdd27519b1ee
+# ╟─ff475c8f-5192-4821-ad48-cdd27519b1ee
 # ╠═4fd7e3a6-6919-4572-8b59-d205e1b2e91e
 # ╠═d2f30f92-485a-4097-971d-82a9e6e769e2
 # ╟─472aa319-9f85-480a-8fe1-21e16e40d74d
@@ -460,17 +451,18 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═5ec35e25-1bea-4491-b523-daf4e2ed526d
 # ╟─629d8e0b-28e7-40fc-9b6e-d10759edcb1f
 # ╟─877b751d-921a-4f82-b39a-eae049862815
-# ╟─3a9e0c59-26b5-4ce3-a037-0875be355e84
+# ╠═516c0ed3-5106-4650-ad35-675168a0a5a3
 # ╠═af5e9810-9a49-48fb-85de-82225d2b0ece
 # ╠═f563c8af-82ee-4b2e-8cfd-0b1b151dd7d7
-# ╠═b4288622-89d3-48db-b973-110b7dd4ce0a
 # ╟─ca8df1e0-fa82-434b-8e24-9f8c60cf5690
-# ╠═bf7ca4d9-7b58-4550-9e2d-a74ce009741b
 # ╠═d7ea76b8-a788-4237-a5ff-fb1fe4685420
 # ╠═12aa0271-fcec-4f14-86bf-f5d5bcf5ebdc
 # ╟─f9ebfc88-8623-46a2-bde5-de9b666cba77
 # ╠═cce2601b-541c-4b64-95a1-28927356dced
 # ╟─d6f01108-1b9c-49e3-89a5-51b09d6d07a1
+# ╠═d3591d04-d300-467c-9fdf-2b912e9e6130
 # ╠═5392da90-c4d6-4723-b6f5-576e201edafc
+# ╟─f5199680-5116-4263-a8b1-40a3fb6f11c4
+# ╠═bcc7ff02-9639-4d16-9b2b-915acd87cd11
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
