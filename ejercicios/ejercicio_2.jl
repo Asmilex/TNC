@@ -19,14 +19,98 @@ Dado tu número n de 8 cifras de la lista publicada.
 """
 
 # ╔═╡ 71d06108-4871-4c8e-a1d2-fea490935048
-m::Int64 = 77432081
+n::Int64 = 77432081
 # m = 27213647 # m de ejemplo
 
-# ╔═╡ 3a9e0c59-26b5-4ce3-a037-0875be355e84
-md"Usaremos el algoritmo del ejercicio 1 modificado para este ejercicio"
+# ╔═╡ 777b4e82-d446-4e88-8a01-505d148a6371
+md"## Algoritmo manual"
+
+# ╔═╡ ff475c8f-5192-4821-ad48-cdd27519b1ee
+md"De partida, calculemos $n \text{ mod } 8$ y $n \text{ mod } 4$"
+
+# ╔═╡ 4fd7e3a6-6919-4572-8b59-d205e1b2e91e
+mod(n, 8)
+
+# ╔═╡ d2f30f92-485a-4097-971d-82a9e6e769e2
+mod(n, 4)
+
+# ╔═╡ 472aa319-9f85-480a-8fe1-21e16e40d74d
+md"Por tanto, para $p > 2$, nos encontraremos en el caso en el que uno de ellos ambos son impares y uno de ellos, n, $n \equiv 1 \text{ mod } 4$"
+
+# ╔═╡ 90763f21-a853-4d80-898c-41d78ca54d6e
+md"### p = 2"
+
+# ╔═╡ 546739b8-5334-4733-a54d-ac415212cb57
+md"Queremos calcular $\Big(\frac{2}{n}\Big)$. "
+
+# ╔═╡ fe13bd86-f990-4e22-a576-735b78bc34a2
+mod(n, 8)
+
+# ╔═╡ 5f2e842f-a62a-4f7c-b299-ceeee16295cf
+md"$\Rightarrow \Big(\frac{2}{n}\Big) = (-1)^{(n^2 -1)/8} = 1$"
+
+# ╔═╡ d5fc863d-fdc4-4bc1-a281-98093211237c
+md"### p = 3"
+
+# ╔═╡ 0a66c417-b35e-48b8-b1f5-1f249fc16dc3
+md"Ambos son impares "
+
+# ╔═╡ bcfa05ea-369c-40cd-99eb-0b3b657fa8e0
+mod(n, 4)
+
+# ╔═╡ 10d00066-432c-420c-93ba-6902e128534f
+md"Como uno de ellos, n, es $1\text{ mod } 4$, entonces $\Big(\frac{3}{n}\Big) = \Big(\frac{n}{3}\Big)$"
+
+# ╔═╡ fbf982e6-5cb9-441c-8e02-75968faef70a
+mod(n, 3)
+
+# ╔═╡ a10680a1-ef2d-49e9-9313-b85b92d54857
+md"Como $n \equiv 2 \text{ mod } 3, \Big(\frac{3}{n}\Big) = \Big(\frac{n}{3}\Big) = \Big(\frac{2}{3}\Big) = -1$"
+
+# ╔═╡ 5bb2ed10-821a-44d3-8d33-ff9f62a3eaa3
+md"### p = 5"
+
+# ╔═╡ e7009fbe-859f-4220-9dd7-bd566b2e34e6
+mod(5, 4)
+
+# ╔═╡ 45727247-2e48-4b62-b478-21db799699ab
+md"Ambos son impares, y uno de ellos (5) da congruente con 1 módulo 4, por lo que $\Big(\frac{5}{n}\Big) = \Big(\frac{n}{5}\Big)$"
+
+# ╔═╡ c4c739ad-3785-414a-8ac5-3a97894057f6
+mod(n, 5)
+
+# ╔═╡ df319eb4-6c4f-418a-8fa0-47278f85ebd6
+md"Como $n \equiv 1 \text{ mod } 5, \Big(\frac{5}{n}\Big) = \Big(\frac{n}{5}\Big) = \Big(\frac{1}{5}\Big) = 1$"
+
+# ╔═╡ 1baa439c-9c37-45b2-bf33-53887b9ab638
+md"### p = 7"
+
+# ╔═╡ 9a19825c-b932-4e03-9e05-ed6ea3cb2002
+md"Estamos en el mismo caso que antes, así que $\Big(\frac{7}{n}\Big) = \Big(\frac{n}{7}\Big)$"
+
+# ╔═╡ f865a535-39d9-44b8-9232-fd963ce72287
+mod(n, 7)
+
+# ╔═╡ 5f1359db-bbf2-42c6-8140-23701c52c589
+md"Entonces, $\Big(\frac{7}{n}\Big) = \Big(\frac{n}{7}\Big) = \Big(\frac{6}{7}\Big) = \Big(\frac{2}{7}\Big) \Big(\frac{3}{7}\Big) = 1 \cdot (-1) = -1$"
+
+# ╔═╡ ea6d4df7-c41c-4037-a3a0-35279f7d530d
+md"### p = 11"
+
+# ╔═╡ 02b1b79c-0296-4d93-8cd2-c9fcaccfa34c
+md"Misma situación: $\Big(\frac{11}{n}\Big) = \Big(\frac{n}{11}\Big)$"
+
+# ╔═╡ 5ec35e25-1bea-4491-b523-daf4e2ed526d
+mod(n, 11)
+
+# ╔═╡ 629d8e0b-28e7-40fc-9b6e-d10759edcb1f
+md"Y por lo tanto, $\Big(\frac{11}{n}\Big) = 1$"
 
 # ╔═╡ 877b751d-921a-4f82-b39a-eae049862815
 md"## Símbolo de Jacobi"
+
+# ╔═╡ 3a9e0c59-26b5-4ce3-a037-0875be355e84
+md"Usaremos el algoritmo del ejercicio 1 modificado para este ejercicio"
 
 # ╔═╡ af5e9810-9a49-48fb-85de-82225d2b0ece
 function simbolo_jacobi(a, n)
@@ -66,10 +150,13 @@ end
 # ╔═╡ f563c8af-82ee-4b2e-8cfd-0b1b151dd7d7
 with_terminal() do
 	for a in [2, 3, 5, 7, 11]
-		τ = simbolo_jacobi(a, m)
-		println("El símbolo de Jacobi para a = ", a, ", m = ", m, " vale ", τ)
+		τ = simbolo_jacobi(a, n)
+		println("El símbolo de Jacobi para a = ", a, ", m = ", n, " vale ", τ)
 	end
 end
+
+# ╔═╡ b4288622-89d3-48db-b973-110b7dd4ce0a
+
 
 # ╔═╡ ca8df1e0-fa82-434b-8e24-9f8c60cf5690
 md"## Posibles primos de Euler"
@@ -344,10 +431,39 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─328a2950-9343-11ec-28ec-7139a5c072a1
 # ╠═71d06108-4871-4c8e-a1d2-fea490935048
 # ╟─a61850f7-32bc-4463-9e28-9117ed578f8f
-# ╟─3a9e0c59-26b5-4ce3-a037-0875be355e84
+# ╟─777b4e82-d446-4e88-8a01-505d148a6371
+# ╠═ff475c8f-5192-4821-ad48-cdd27519b1ee
+# ╠═4fd7e3a6-6919-4572-8b59-d205e1b2e91e
+# ╠═d2f30f92-485a-4097-971d-82a9e6e769e2
+# ╟─472aa319-9f85-480a-8fe1-21e16e40d74d
+# ╟─90763f21-a853-4d80-898c-41d78ca54d6e
+# ╟─546739b8-5334-4733-a54d-ac415212cb57
+# ╠═fe13bd86-f990-4e22-a576-735b78bc34a2
+# ╟─5f2e842f-a62a-4f7c-b299-ceeee16295cf
+# ╟─d5fc863d-fdc4-4bc1-a281-98093211237c
+# ╟─0a66c417-b35e-48b8-b1f5-1f249fc16dc3
+# ╠═bcfa05ea-369c-40cd-99eb-0b3b657fa8e0
+# ╟─10d00066-432c-420c-93ba-6902e128534f
+# ╠═fbf982e6-5cb9-441c-8e02-75968faef70a
+# ╟─a10680a1-ef2d-49e9-9313-b85b92d54857
+# ╟─5bb2ed10-821a-44d3-8d33-ff9f62a3eaa3
+# ╠═e7009fbe-859f-4220-9dd7-bd566b2e34e6
+# ╟─45727247-2e48-4b62-b478-21db799699ab
+# ╠═c4c739ad-3785-414a-8ac5-3a97894057f6
+# ╟─df319eb4-6c4f-418a-8fa0-47278f85ebd6
+# ╟─1baa439c-9c37-45b2-bf33-53887b9ab638
+# ╟─9a19825c-b932-4e03-9e05-ed6ea3cb2002
+# ╠═f865a535-39d9-44b8-9232-fd963ce72287
+# ╟─5f1359db-bbf2-42c6-8140-23701c52c589
+# ╟─ea6d4df7-c41c-4037-a3a0-35279f7d530d
+# ╟─02b1b79c-0296-4d93-8cd2-c9fcaccfa34c
+# ╠═5ec35e25-1bea-4491-b523-daf4e2ed526d
+# ╟─629d8e0b-28e7-40fc-9b6e-d10759edcb1f
 # ╟─877b751d-921a-4f82-b39a-eae049862815
+# ╟─3a9e0c59-26b5-4ce3-a037-0875be355e84
 # ╠═af5e9810-9a49-48fb-85de-82225d2b0ece
 # ╠═f563c8af-82ee-4b2e-8cfd-0b1b151dd7d7
+# ╠═b4288622-89d3-48db-b973-110b7dd4ce0a
 # ╟─ca8df1e0-fa82-434b-8e24-9f8c60cf5690
 # ╠═bf7ca4d9-7b58-4550-9e2d-a74ce009741b
 # ╠═d7ea76b8-a788-4237-a5ff-fb1fe4685420
