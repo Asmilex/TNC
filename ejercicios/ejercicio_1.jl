@@ -14,12 +14,23 @@ end
 md"""
 # Ejercicio 1 
 
+> Autor: Andrés Millán
+> 
 Dado tu número n = d1d2d3d4d5d6d7d8,
 
 1. Mientras n sea múltiplo de 2, 3, 5, 7 u 11 le sumas uno. De forma que tu nuevo n no tenga esos divisores primos.
-2. Calcula a^(n-1) mod n para cada uno de esas cinco bases usando sucesivamente el algoritmo de izda-drcha y de drcha-izda.
+2. Calcula $a^{n-1} \text{ mod } n$ para cada uno de esas cinco bases usando sucesivamente el algoritmo de izda-drcha y de drcha-izda.
 3. ¿Es n un posible primo de Fermat para alguna de ellas? ¿Es n un pseudoprimo para alguna de ellas?
 """
+
+# ╔═╡ 3a664158-13f6-479b-bbb3-542728b5ba33
+md"Mi número es"
+
+# ╔═╡ 345c845d-97dd-4500-9e2d-a9e4423ab9ab
+n = 77432071
+
+# ╔═╡ d0876ae7-eadd-4631-ad8b-0793a8b22f5a
+md"Mientras que sea múltiplo de 2, 3, 5, 7 u 11, le vamos a sumar 1:"
 
 # ╔═╡ 4674d500-933e-11ec-319a-2bc8ee4dec72
 function parse_number(n)
@@ -29,6 +40,12 @@ function parse_number(n)
 
     return n
 end
+
+# ╔═╡ 6aafc7d5-25e3-4f26-aab4-b8e838067887
+n_parseado = parse_number(n)
+
+# ╔═╡ e99e9208-29b1-4fc0-bdac-b1ca1518a1f6
+md"Para calcular $a^{n-1}\text{ mod } n$, vamos a definir las siguientes funciones:"
 
 # ╔═╡ 8c09c59b-80ca-4257-91d4-4b0ce67f04dc
 function fast_exp_left_to_right(a, n)
@@ -89,12 +106,6 @@ function fast_exp_right_to_left(a, n)
     return acu
 end
 
-# ╔═╡ 345c845d-97dd-4500-9e2d-a9e4423ab9ab
-n = 77432071
-
-# ╔═╡ 6aafc7d5-25e3-4f26-aab4-b8e838067887
-n_parseado = parse_number(n)
-
 # ╔═╡ 0e4a2664-8bf7-4c5f-9ffd-c1e5e804f23c
 with_terminal() do
 	for a in [2, 3, 5, 7, 11]
@@ -105,9 +116,15 @@ end
 
 # ╔═╡ 379cc1bd-4c21-4bee-acff-aee05d477606
 md"""
-## ¿Es n un posible primo?
+## ¿Es n un posible primo de Fermat?
 
 Como podemos ver, ninguna de las ejecuciones acaba dando 1. Esto nos dice que n es compuesto. 
+
+## ¿Es n un pseudoprimo para alguna de ellas?
+
+Dado que lo anterior no ocurre, esto tampoco.
+
+De hecho, podemos ver sus factores con:
 """
 
 # ╔═╡ ffe749c8-7801-4298-af92-56f0ff510232
@@ -337,12 +354,15 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 
 # ╔═╡ Cell order:
 # ╟─c4f69621-11c6-4b82-a182-3cd177396f92
-# ╠═67f4e16e-7acd-4d59-b7ff-eb13b1963e35
+# ╟─67f4e16e-7acd-4d59-b7ff-eb13b1963e35
+# ╟─3a664158-13f6-479b-bbb3-542728b5ba33
+# ╠═345c845d-97dd-4500-9e2d-a9e4423ab9ab
+# ╟─d0876ae7-eadd-4631-ad8b-0793a8b22f5a
 # ╠═4674d500-933e-11ec-319a-2bc8ee4dec72
+# ╠═6aafc7d5-25e3-4f26-aab4-b8e838067887
+# ╟─e99e9208-29b1-4fc0-bdac-b1ca1518a1f6
 # ╠═8c09c59b-80ca-4257-91d4-4b0ce67f04dc
 # ╠═81c3e4ce-251a-4417-92e7-8ab9d06bccb9
-# ╠═345c845d-97dd-4500-9e2d-a9e4423ab9ab
-# ╠═6aafc7d5-25e3-4f26-aab4-b8e838067887
 # ╠═0e4a2664-8bf7-4c5f-9ffd-c1e5e804f23c
 # ╟─379cc1bd-4c21-4bee-acff-aee05d477606
 # ╠═ffe749c8-7801-4298-af92-56f0ff510232

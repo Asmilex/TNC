@@ -9,18 +9,26 @@ using PlutoUI
 
 # ╔═╡ 328a2950-9343-11ec-28ec-7139a5c072a1
 md"""
-
 # Ejercicio 2 
+
+> Autor: Andrés Millán
 
 Dado tu número n de 8 cifras de la lista publicada.
 1. Usa el algoritmo manual para calcular el símbolo de Jacobi ($\frac{p}{n}$), para p cada uno de los 5 primeros primos.
 2. Si para alguna de esas bases tu número sale posible primo de Fermat, comprueba si además es posible primo de Euler.
 3. ¿Es tu número n pseudoprimo de Fermat o de Euler para alguna de las bases?
+
+Mi número es:
 """
 
 # ╔═╡ 71d06108-4871-4c8e-a1d2-fea490935048
 n::Int64 = 77432081
-# m = 27213647 # m de ejemplo
+
+# ╔═╡ d9781faa-c0d4-455e-8955-65a2ef3d4032
+begin
+	using Primes
+	Primes.factor(n)
+end
 
 # ╔═╡ 777b4e82-d446-4e88-8a01-505d148a6371
 md"## Algoritmo manual"
@@ -35,7 +43,7 @@ mod(n, 8)
 mod(n, 4)
 
 # ╔═╡ 472aa319-9f85-480a-8fe1-21e16e40d74d
-md"Por tanto, para $p > 2$, nos encontraremos en el caso en el que uno de ellos ambos son impares y uno de ellos, n, $n \equiv 1 \text{ mod } 4$"
+md"Por tanto, para $p > 2$, nos encontraremos en el caso en el que uno de ellos ambos son impares y uno de ellos, n, es congruente con 1 módulo 4: $n \equiv 1 \text{ mod } 4$"
 
 # ╔═╡ 90763f21-a853-4d80-898c-41d78ca54d6e
 md"### p = 2"
@@ -203,13 +211,26 @@ md"Por lo tanto, tenemos tres posibles primos de Euler:"
 # ╔═╡ bcc7ff02-9639-4d16-9b2b-915acd87cd11
 posibles_primos_euler
 
+# ╔═╡ 6a9e0acb-f4c2-4fbd-9279-a7c0b22e3446
+md"## ¿Es $n$ un pseudoprimo de Fermat o de Euler para algunas de las bases?"
+
+# ╔═╡ b068752d-5fc1-4395-a3db-330fb4e00234
+md"Es bastante posible que sea un pseudoprimo para las bases 2, 5 y 11, puesto que ha pasado ambos tests. Para el resto no podemos garantizarlo. 
+
+Veamos si es posible descomponerlo en factores:"
+
+# ╔═╡ 8e73dc4a-26e8-4fd6-8e97-c34ee4c62cd4
+md"Únicamente tiene como factores el 1 y él mismo, por lo que es un primo."
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+Primes = "27ebfcd6-29c5-5fa9-bf4b-fb8fc14df3ae"
 
 [compat]
 PlutoUI = "~0.7.34"
+Primes = "~0.5.1"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -348,6 +369,11 @@ git-tree-sha1 = "8979e9802b4ac3d58c503a20f2824ad67f9074dd"
 uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 version = "0.7.34"
 
+[[deps.Primes]]
+git-tree-sha1 = "984a3ee07d47d401e0b823b7d30546792439070a"
+uuid = "27ebfcd6-29c5-5fa9-bf4b-fb8fc14df3ae"
+version = "0.5.1"
+
 [[deps.Printf]]
 deps = ["Unicode"]
 uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
@@ -464,5 +490,9 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═5392da90-c4d6-4723-b6f5-576e201edafc
 # ╟─f5199680-5116-4263-a8b1-40a3fb6f11c4
 # ╠═bcc7ff02-9639-4d16-9b2b-915acd87cd11
+# ╟─6a9e0acb-f4c2-4fbd-9279-a7c0b22e3446
+# ╟─b068752d-5fc1-4395-a3db-330fb4e00234
+# ╠═d9781faa-c0d4-455e-8955-65a2ef3d4032
+# ╟─8e73dc4a-26e8-4fd6-8e97-c34ee4c62cd4
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
