@@ -38,9 +38,13 @@ md"Vamos a aplicar el método $\rho$ de Polard para factorizar $n$:"
 
 # ╔═╡ 5f73adf3-55ab-49d8-a9ed-c8d06e0d5805
 """
-Factoriza el número `n` usando una función `f: Z_n -> Z_n` mediante el método de detección de Floyd
+Factoriza el número `n` usando una función `f: Z_n -> Z_n` mediante el método de detección de Floyd. Devuelve el formato `[factores, iteraciones]`, donde `factores` es un array
 """
-function ρ_Polard(n, f, t = 100, x0 = 1)
+function ρ_Polard(n, f, t = 100, x0 = 2)
+	if mod(n, 2) == 0
+		return [[2, div(n, 2)], 0]
+	end
+	
 	x = x0
 	y = x
 	i = 0
@@ -52,8 +56,8 @@ function ρ_Polard(n, f, t = 100, x0 = 1)
 		g = gcd(x - y, n)
 
 		if 1 < g && g < n
-			#@info "Iteraciones para n = $n: $i"
-			return [g, div(n, g)]
+			println("Iteraciones necesarias para $n: $i")
+			return [[g, div(n, g)], i]
 		end
 	end
 
@@ -85,6 +89,7 @@ function descomponer(n)
 	irreducibles = []
 	primos = [2, 3, 5, 7, 11, 13, 17]
 	f = x -> x^2 + 1
+	i = 0
 
 	while length(por_descomponer) > 0
 		num = pop!(por_descomponer)
@@ -94,18 +99,30 @@ function descomponer(n)
 		if all(test_MR) || num ∈ primos
 			push!(irreducibles, num)
 		else
-			por_descomponer = vcat(por_descomponer, ρ_Polard(num, f))
+			resultado = ρ_Polard(num, f)
+			i = i + resultado[2]
+			por_descomponer = vcat(por_descomponer, resultado[1])
 		end
 	end
 
-	return irreducibles
+	return [irreducibles, i]
 end
 
 # ╔═╡ 1455a101-4535-46af-82bf-4389d54b5043
-descomponer(n-1)
+resultado = descomponer(n-1)
 
-# ╔═╡ 0c5794e2-edbd-4652-8747-ed6c1073728b
-ρ_Polard(16, x -> x^2 + 1)
+# ╔═╡ bc4c7c13-0eda-4453-a8ec-5d5a909f2307
+begin
+	factores, iters = join(resultado[1], ", "), string(resultado[2])
+end
+
+# ╔═╡ 8d80b723-f5ae-4bc1-a4f8-008acd4d6033
+md"""
+Vemos que los factores son $factores, y han sido necesarias $iters iteraciones para calcularlo. 
+"""
+
+# ╔═╡ 9620afd2-8828-4cd4-9414-a47041616596
+factor(n-1)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -486,6 +503,8 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─1677f7f4-dba2-465a-bf28-4f4b3d9f9bde
 # ╠═585b4013-4158-4617-a6bf-e41f98d2a8e4
 # ╠═1455a101-4535-46af-82bf-4389d54b5043
-# ╠═0c5794e2-edbd-4652-8747-ed6c1073728b
+# ╟─bc4c7c13-0eda-4453-a8ec-5d5a909f2307
+# ╟─8d80b723-f5ae-4bc1-a4f8-008acd4d6033
+# ╠═9620afd2-8828-4cd4-9414-a47041616596
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
