@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.18.0
+# v0.18.1
 
 using Markdown
 using InteractiveUtils
@@ -41,7 +41,7 @@ md"Como vemos, sale 1 para todos nuestros primos"
 md"""
 ## Apartado 2
 
-Para este apartado, vamos a reutilizar la función del símbolo de Jacobi del ejercicio 2
+Por el apartado anterior, sabemos que $m$ es un posible primo de Fermat para las bases $2, 3, 5, 7, 11$. En este apartado vamos a comprobar que también es un posible primo de Euler; es decir, $a^{(m-1)/2} \text{ mod } m = \left(\frac{a}{m}\right)$
 """
 
 # ╔═╡ 08adaa1c-ba20-404e-a205-ab510bb27a01
@@ -99,7 +99,9 @@ function test_Solovay_Strassen(a, n)
 end
 
 # ╔═╡ b08067ab-4ef3-42b4-8cd4-7fec7af924f7
-md"Veamos si nuestro número pasa el test para los primeros primos:"
+md"""Veamos si nuestro número pasa el test para los primeros primos.
+
+Menciono que el algoritmo muestra $m - 1$ en vez de $-1\text{ mod }m$, pero se cumple la igualdad:"""
 
 # ╔═╡ 9937ff68-532d-472a-9cee-612157785efa
 with_terminal() do
@@ -182,7 +184,7 @@ md"## Apartado 4"
 
 # ╔═╡ 3da22578-2d20-4868-9107-8f2b23ba0bf0
 md"""
-Como ha pasado el test de Miller Rabin para las 5 bases, la probabilidad de que mi número sea compuesto es menor a $\frac{1}{4^5} = 0.0009765625$; es decir, que tiene una probabilidad de ser primo de $0.9990234375$
+Como ha pasado tanto el test de Solovay-Strassen como el de Miller-Rabin para las 5 bases, la probabilidad de que mi número sea compuesto es menor a $\frac{1}{4^5} = 0.0009765625$; es decir, que tiene una probabilidad de ser primo de $0.9990234375$
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001

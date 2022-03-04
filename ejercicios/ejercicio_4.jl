@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.18.0
+# v0.18.1
 
 using Markdown
 using InteractiveUtils
@@ -41,24 +41,28 @@ md"Vamos a aplicar el método $\rho$ de Polard para factorizar $n$:"
 Factoriza el número `n` usando una función `f: Z_n -> Z_n` mediante el método de detección de Floyd. Devuelve el formato `[factores, iteraciones]`, donde `factores` es un array
 """
 function ρ_Polard(n, f, t = 100, x0 = 2)
-	if mod(n, 2) == 0
-		return [[2, div(n, 2)], 0]
-	end
 	
 	x = x0
 	y = x
 	i = 0
 
+	println("Paso | x | y | mcd")
 	while i < t
 		i = i + 1
 		x = mod(f(x), n)
 		y = mod(f(f(y)), n)
 		g = gcd(x - y, n)
+		println("$i | $x | $y | $g")
 
 		if 1 < g && g < n
 			println("Iteraciones necesarias para $n: $i")
 			return [[g, div(n, g)], i]
 		end
+	end
+
+	# En caso en el que sea divisible por dos, es posible que falle, así que lo comprobamos a mano. 
+	if mod(n, 2) == 0
+		return [[2, div(n, 2)], 0]
 	end
 
 	return []
@@ -68,17 +72,12 @@ end
 md"Primero, vamos a aplicar $\rho$ de Polard para n-1, con la función $f(x) = x^2 + 1$:"
 
 # ╔═╡ c3202c6e-c174-4fdb-827c-30b513ee2c26
-ρ_Polard(n-1, x -> x^2 + 1)
+with_terminal() do 
+	ρ_Polard(n-1, x -> x^2 + 1)
+end
 
 # ╔═╡ cacc9213-fcc6-4789-a0c2-6af504ed612d
-md"Vemos que ha tardado dos iteraciones, habiendo encontrado los factores $16$ y $4839505$. Sin embargo, es bastante probable que tenga más."
-
-# ╔═╡ 1677f7f4-dba2-465a-bf28-4f4b3d9f9bde
-md"""
-## Apartado 2
-
-Vamos a definir una nueva función que nos permita encontrarlos a todos
-"""
+md"Vemos que ha tardado dos iteraciones, habiendo encontrado los factores $176$ y $439955$. Sin embargo, es bastante probable que tenga más. Vamos a definir una nueva función que nos permita encontrarlos todos:"
 
 # ╔═╡ 585b4013-4158-4617-a6bf-e41f98d2a8e4
 """
@@ -111,18 +110,19 @@ end
 # ╔═╡ 1455a101-4535-46af-82bf-4389d54b5043
 resultado = descomponer(n-1)
 
-# ╔═╡ bc4c7c13-0eda-4453-a8ec-5d5a909f2307
-begin
-	factores, iters = join(resultado[1], ", "), string(resultado[2])
-end
-
 # ╔═╡ 8d80b723-f5ae-4bc1-a4f8-008acd4d6033
 md"""
-Vemos que los factores son $factores, y han sido necesarias $iters iteraciones para calcularlo. 
+Vemos que los factores son $87991, 5, 11, 2, 2, 2, 2$, y han sido necesarias $5$ iteraciones para calcularlo. 
 """
 
-# ╔═╡ 9620afd2-8828-4cd4-9414-a47041616596
-factor(n-1)
+# ╔═╡ 1677f7f4-dba2-465a-bf28-4f4b3d9f9bde
+md"""
+## Apartado 2
+
+Hemos obtenido un factor, $87991$, que es mayor de 4 cifras. Vamos a pasarle el test de Lucas-Lehmer para certificar su primalidad.
+
+El teorema de Lucas-Lehmer nos dice que si $\exists a \in \mathbb{Z}$ tal que $a^{n-1} \equiv 1 \text{ mod }n$ y $a^{(n-1)/q} \not \equiv 1 \text{ mod }n$ para todo divisor primo $q$ de $n - 1$, entonces $n$ es primo
+"""
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -500,11 +500,9 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─2fa8bd85-95c9-45cb-838c-fa2da880de66
 # ╠═c3202c6e-c174-4fdb-827c-30b513ee2c26
 # ╟─cacc9213-fcc6-4789-a0c2-6af504ed612d
-# ╟─1677f7f4-dba2-465a-bf28-4f4b3d9f9bde
 # ╠═585b4013-4158-4617-a6bf-e41f98d2a8e4
 # ╠═1455a101-4535-46af-82bf-4389d54b5043
-# ╟─bc4c7c13-0eda-4453-a8ec-5d5a909f2307
 # ╟─8d80b723-f5ae-4bc1-a4f8-008acd4d6033
-# ╠═9620afd2-8828-4cd4-9414-a47041616596
+# ╟─1677f7f4-dba2-465a-bf28-4f4b3d9f9bde
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
