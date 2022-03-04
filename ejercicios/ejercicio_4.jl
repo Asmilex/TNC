@@ -124,6 +124,51 @@ Hemos obtenido un factor, $87991$, que es mayor de 4 cifras. Vamos a pasarle el 
 El teorema de Lucas-Lehmer nos dice que si $\exists a \in \mathbb{Z}$ tal que $a^{n-1} \equiv 1 \text{ mod }n$ y $a^{(n-1)/q} \not \equiv 1 \text{ mod }n$ para todo divisor primo $q$ de $n - 1$, entonces $n$ es primo
 """
 
+# ╔═╡ d141bd31-db98-44b0-88f1-8ea7ebea61f6
+function lucas_lehmer(n)
+	println("Aplicando el test de Lucas-Lehmer para $n")
+	# Miramos los primos menores que la mitad de n
+	primos = primes(div(n-1, 2))
+	factores = keys(factor(n-1))
+
+	for a in primos
+		println("\tProbando con $a")
+		if powermod(a, n-1, n) == 1 
+			for q in factores
+				if powermod(a, div(n-1, q), n) != 1
+					println("\tSe ha encontrado a = $a, q = $q")
+					return true
+				end
+			end
+		end
+	end
+
+	return false
+end
+
+# ╔═╡ e7af23f6-dc54-4fc0-96f0-5be8a25962e4
+md"Veamos qué ocurre si se lo aplicamos:"
+
+# ╔═╡ 60b600c8-8557-4c9a-800c-e20a55b701dd
+with_terminal() do
+	lucas_lehmer(87991)
+end
+
+# ╔═╡ a508c201-258d-4077-b865-470fbb28c14c
+md"Así que el número $87991$ es primo"
+
+# ╔═╡ 351fcf82-4237-4d67-9125-a3c93880b177
+md"""
+## Apartado 3
+
+Apliquémosle el test ahora a $n$
+"""
+
+# ╔═╡ 4ce136e2-41b2-440a-ac1c-056b6dcc97e2
+with_terminal() do
+	lucas_lehmer(n)
+end
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -494,7 +539,7 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─4bde657e-f021-4f4b-b844-3fccaad1ea7b
 # ╟─90d0590a-8eb1-414c-b310-5b4efcaea7ef
 # ╟─97ac7584-87b6-4082-afaf-8e6610ad7bd7
-# ╟─e6c11a6f-fad9-4be7-b72d-9b052ddc4554
+# ╠═e6c11a6f-fad9-4be7-b72d-9b052ddc4554
 # ╟─be15cc7d-8d66-49a0-835d-66f614e98796
 # ╠═5f73adf3-55ab-49d8-a9ed-c8d06e0d5805
 # ╟─2fa8bd85-95c9-45cb-838c-fa2da880de66
@@ -504,5 +549,11 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═1455a101-4535-46af-82bf-4389d54b5043
 # ╟─8d80b723-f5ae-4bc1-a4f8-008acd4d6033
 # ╟─1677f7f4-dba2-465a-bf28-4f4b3d9f9bde
+# ╠═d141bd31-db98-44b0-88f1-8ea7ebea61f6
+# ╟─e7af23f6-dc54-4fc0-96f0-5be8a25962e4
+# ╠═60b600c8-8557-4c9a-800c-e20a55b701dd
+# ╟─a508c201-258d-4077-b865-470fbb28c14c
+# ╟─351fcf82-4237-4d67-9125-a3c93880b177
+# ╠═4ce136e2-41b2-440a-ac1c-056b6dcc97e2
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
