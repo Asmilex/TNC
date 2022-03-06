@@ -41,7 +41,12 @@ md"Vamos a aplicar el método $\rho$ de Polard para factorizar $n$:"
 Factoriza el número `n` usando una función `f: Z_n -> Z_n` mediante el método de detección de Floyd. Devuelve el formato `[factores, iteraciones]`, donde `factores` es un array
 """
 function ρ_Polard(n, f, t = 100, x0 = 2)
-	
+	# En caso en el que sea divisible por dos, es posible que falle, así que lo comprobamos a mano.
+	if mod(n, 2) == 0
+		return [[2, div(n, 2)], 0]
+	end
+
+
 	x = x0
 	y = x
 	i = 0
@@ -60,11 +65,6 @@ function ρ_Polard(n, f, t = 100, x0 = 2)
 		end
 	end
 
-	# En caso en el que sea divisible por dos, es posible que falle, así que lo comprobamos a mano. 
-	if mod(n, 2) == 0
-		return [[2, div(n, 2)], 0]
-	end
-
 	return []
 end
 
@@ -72,12 +72,10 @@ end
 md"Primero, vamos a aplicar $\rho$ de Polard para n-1, con la función $f(x) = x^2 + 1$:"
 
 # ╔═╡ c3202c6e-c174-4fdb-827c-30b513ee2c26
-with_terminal() do 
-	ρ_Polard(n-1, x -> x^2 + 1)
-end
+ρ_Polard(n-1, x -> x^2 + 1)
 
 # ╔═╡ cacc9213-fcc6-4789-a0c2-6af504ed612d
-md"Vemos que ha tardado dos iteraciones, habiendo encontrado los factores $176$ y $439955$. Sin embargo, es bastante probable que tenga más. Vamos a definir una nueva función que nos permita encontrarlos todos:"
+md"Vemos que nuestro método ha encontrado los factores $2$ y $38716040$. Sin embargo, es bastante probable que tenga más. Vamos a definir una nueva función que nos permita encontrarlos todos:"
 
 # ╔═╡ 585b4013-4158-4617-a6bf-e41f98d2a8e4
 """
@@ -108,11 +106,13 @@ function descomponer(n)
 end
 
 # ╔═╡ 1455a101-4535-46af-82bf-4389d54b5043
-resultado = descomponer(n-1)
+with_terminal() do
+	resultado = descomponer(n-1)
+end
 
 # ╔═╡ 8d80b723-f5ae-4bc1-a4f8-008acd4d6033
 md"""
-Vemos que los factores son $87991, 5, 11, 2, 2, 2, 2$, y han sido necesarias $5$ iteraciones para calcularlo. 
+Vemos que los factores son $87991, 5, 11, 2, 2, 2, 2$, y han sido necesarias $5$ iteraciones para calcularlo.
 """
 
 # ╔═╡ 1677f7f4-dba2-465a-bf28-4f4b3d9f9bde
@@ -121,24 +121,29 @@ md"""
 
 Hemos obtenido un factor, $87991$, que es mayor de 4 cifras. Vamos a pasarle el test de Lucas-Lehmer para certificar su primalidad.
 
-El teorema de Lucas-Lehmer nos dice que si $\exists a \in \mathbb{Z}$ tal que $a^{n-1} \equiv 1 \text{ mod }n$ y $a^{(n-1)/q} \not \equiv 1 \text{ mod }n$ para todo divisor primo $q$ de $n - 1$, entonces $n$ es primo
+El teorema de Lucas-Lehmer nos dice que si $\exists a \in \mathbb{Z}$ tal que $a^{n-1} \equiv 1 \text{ mod }n$ y $a^{(n-1)/q} \not \equiv 1 \text{ mod }n$ para todo divisor primo $q$ de $n - 1$, entonces $n$ es primo.
+
+Vamos a programar una función para comprobar cualquier $n$:
 """
 
 # ╔═╡ d141bd31-db98-44b0-88f1-8ea7ebea61f6
 function lucas_lehmer(n)
 	println("Aplicando el test de Lucas-Lehmer para $n")
-	# Miramos los primos menores que la mitad de n
-	primos = primes(div(n-1, 2))
-	factores = keys(factor(n-1))
 
-	for a in primos
+	factores = collect(keys(factor(n-1)))
+
+	for a in 1:(n-1)
 		println("\tProbando con $a")
-		if powermod(a, n-1, n) == 1 
-			for q in factores
-				if powermod(a, div(n-1, q), n) != 1
-					println("\tSe ha encontrado a = $a, q = $q")
-					return true
-				end
+
+		if powermod(a, n-1, n) == 1
+			resultado = map(q -> powermod(a, div(n-1, q), n), factores)
+			if 1 ∉ resultado
+				println("\t\tSe ha encontrado a = $a")
+				println("\t\tResultados modulares: $resultado")
+				return true
+			else
+				posicion = first(findall(x -> x == 1, resultado))
+				println("\t\tFalla para q = ", factores[posicion])
 			end
 		end
 	end
@@ -168,6 +173,10 @@ Apliquémosle el test ahora a $n$
 with_terminal() do
 	lucas_lehmer(n)
 end
+
+
+# ╔═╡ 07c998de-2dd9-42c2-b266-524028fc3197
+md"Por el Teorema de Lucas-Lehmer, $n$ es primo"
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -539,7 +548,7 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─4bde657e-f021-4f4b-b844-3fccaad1ea7b
 # ╟─90d0590a-8eb1-414c-b310-5b4efcaea7ef
 # ╟─97ac7584-87b6-4082-afaf-8e6610ad7bd7
-# ╠═e6c11a6f-fad9-4be7-b72d-9b052ddc4554
+# ╟─e6c11a6f-fad9-4be7-b72d-9b052ddc4554
 # ╟─be15cc7d-8d66-49a0-835d-66f614e98796
 # ╠═5f73adf3-55ab-49d8-a9ed-c8d06e0d5805
 # ╟─2fa8bd85-95c9-45cb-838c-fa2da880de66
@@ -555,5 +564,6 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─a508c201-258d-4077-b865-470fbb28c14c
 # ╟─351fcf82-4237-4d67-9125-a3c93880b177
 # ╠═4ce136e2-41b2-440a-ac1c-056b6dcc97e2
+# ╟─07c998de-2dd9-42c2-b266-524028fc3197
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
