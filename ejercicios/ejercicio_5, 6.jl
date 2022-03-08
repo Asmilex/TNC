@@ -18,17 +18,17 @@ Dado tu número $n$ de la lista publicada para este ejercicio:
 
 1. Factoriza $n$ aplicando el método $\rho$ de Polard. ¿Cúantas iteraciones necesitas?
 Sea $p1$ el mayor de sus factores primos y $p2$ el siguiente primo.
-2. Calcula las partes enteras de $p1$ y $p2$ con el algoritmo entero.
-3. Calcula las FCS de $p1$ y $p2$ aplicando el algoritmo que usa aritmética entera
+2. Calcula las partes enteras de $\sqrt{p1}$ y $\sqrt{p2}$ con el algoritmo entero.
+3. Calcula las FCS de $\sqrt{p1}$ y $\sqrt{p2}$ aplicando el algoritmo que usa aritmética entera
 """
-
-# ╔═╡ 13c7aa41-a48b-46bb-aec8-d4419b445ce7
-n = 16133993
 
 # ╔═╡ 05d36ee9-9e0a-416e-8691-0ea120a8f283
 md"""
 ## Apartado 1
 """
+
+# ╔═╡ 13c7aa41-a48b-46bb-aec8-d4419b445ce7
+n = 16133993
 
 # ╔═╡ fc246906-c272-44b6-b0e7-42822d42d29c
 md"Vamos a factorizar $n$ usando $\rho$ de Polard:"
@@ -49,7 +49,108 @@ p2 = last(first(factores))
 lucas_lehmer(p1), lucas_lehmer(p2)
 
 # ╔═╡ d49e8ca6-b8d3-43f3-b44d-83ec59ee70c4
-md"Por Lucas-Lehmer, se cumple que son primos"
+md"""Por Lucas-Lehmer, se cumple que son primos.
+
+## Apartado 2 
+
+Vamos a calcular ahora sus partes enteras con el algoritmo de raíz entera. Para ello, definimos la siguiente función:
+"""
+
+# ╔═╡ 28dba051-1fd8-4ee5-9621-b360f019209c
+"""
+Calcula la parte entera de la raíz de n
+"""
+function raiz_entera(n)
+	if n <= 4
+		return 
+	end
+
+	a =	iseven(n) ? div(n, 2) : div(n+1, 2)
+	b = div(a^2 + n, 2*a)
+	i = 0 
+
+	while a > b
+		a = b
+		b = div(a^2 + n, 2*a)
+		i = i + 1
+		println("i, a, b = $i, $a, $b")
+	end
+
+	return a
+end
+
+# ╔═╡ 64e23486-b9a3-42a1-be6a-9b5213a4ceb0
+raiz_entera(101)
+
+# ╔═╡ 6e054b14-21a6-4386-98ea-9d37a0e4ea88
+md"Aplicándolo a nuestros primos $p_1$  y $p_2$:"
+
+# ╔═╡ f63b34b4-7e13-4a22-b7ee-273a939bf508
+raiz_entera(p1)
+
+# ╔═╡ cd592d3d-6006-4346-9236-a4d3460dd096
+raiz_entera(p2)
+
+# ╔═╡ f68fce17-e50e-4ca3-9875-9d37e3412eb2
+md"""
+## Apartado 3
+
+Pasemos a calcular las fracciones continuas simples. Como estamos en el caso de que $\alpha = \sqrt{d}$, podemos usar el criterio de parada $Q_i = 1$
+"""
+
+# ╔═╡ 1b887f64-944e-49bb-84c0-a70e81e0d8cd
+function FCS(d)
+	P = 0 
+	Q = 1 
+	sqrt_d_entera = raiz_entera(d)
+	q = sqrt_d_entera
+
+	fcs = [q]
+	
+	i = 0 
+
+    println("Paso | P_i | Q_i | q_i")
+    println("$i | $P | $Q | $q")
+
+	i = 1 
+	P = q * Q - P 
+	Q_anterior = Q
+	Q = div(d - P^2, Q)
+	q = div(P + sqrt_d_entera, Q)
+
+	push!(fcs, q)
+
+	println("$i | $P | $Q | $q")
+
+	while true
+		i = i + 1
+		
+		P_anterior = P 
+		P = q * Q - P 
+		
+		Q_anterior2 = Q_anterior
+		Q_anterior = Q
+
+		Q = Q_anterior2 + q * (P_anterior - P)
+		q = div(P + sqrt_d_entera, Q)
+
+		println("$i | $P | $Q | $q")
+		
+		if Q_anterior == 1
+			break
+		else 
+			push!(fcs, q)
+		end
+	end
+
+	return fcs
+end
+
+# ╔═╡ cfa3f294-208a-4e96-ac72-2e7dafbf9e3b
+FCS(p1)
+
+# ╔═╡ f8af2039-fd2c-4c7d-8225-e4eb55226323
+FCS(p2)
 
 # ╔═╡ 54f11d9d-da5a-4c17-9623-50806eb25117
 md"""
@@ -429,10 +530,10 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 
 # ╔═╡ Cell order:
 # ╟─33d1dcf0-9df6-11ec-052c-db0b1f6e9906
-# ╟─13c7aa41-a48b-46bb-aec8-d4419b445ce7
-# ╠═29916bf1-dd8b-4b58-a1bb-fc69fa87d806
+# ╟─29916bf1-dd8b-4b58-a1bb-fc69fa87d806
 # ╟─02eebdd6-e6c6-4352-bb67-7c43d8ff1424
 # ╟─05d36ee9-9e0a-416e-8691-0ea120a8f283
+# ╟─13c7aa41-a48b-46bb-aec8-d4419b445ce7
 # ╟─fc246906-c272-44b6-b0e7-42822d42d29c
 # ╠═661190ff-c3f0-49da-a71a-7c5cfd660983
 # ╟─866bdcd2-d61f-42db-bfa2-cadad0c078a2
@@ -440,6 +541,15 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─673cdf01-eb38-4be8-8c55-1222d669b849
 # ╠═0b6feb51-6448-4ec1-9564-2cdc26d0e275
 # ╟─d49e8ca6-b8d3-43f3-b44d-83ec59ee70c4
+# ╠═28dba051-1fd8-4ee5-9621-b360f019209c
+# ╠═64e23486-b9a3-42a1-be6a-9b5213a4ceb0
+# ╟─6e054b14-21a6-4386-98ea-9d37a0e4ea88
+# ╠═f63b34b4-7e13-4a22-b7ee-273a939bf508
+# ╠═cd592d3d-6006-4346-9236-a4d3460dd096
+# ╟─f68fce17-e50e-4ca3-9875-9d37e3412eb2
+# ╠═1b887f64-944e-49bb-84c0-a70e81e0d8cd
+# ╠═cfa3f294-208a-4e96-ac72-2e7dafbf9e3b
+# ╠═f8af2039-fd2c-4c7d-8225-e4eb55226323
 # ╟─54f11d9d-da5a-4c17-9623-50806eb25117
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
