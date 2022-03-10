@@ -29,6 +29,7 @@ md"""
 
 # ╔═╡ 13c7aa41-a48b-46bb-aec8-d4419b445ce7
 n = 16133993
+#n = 22607939 # n de Paula
 
 # ╔═╡ fc246906-c272-44b6-b0e7-42822d42d29c
 md"Vamos a factorizar $n$ usando $\rho$ de Polard:"
@@ -126,14 +127,14 @@ function FCS(d)
 
 		Q = Q_anterior2 + q * (P_anterior - P)
 		q = div(P + sqrt_d_entera, Q)
-
-		println("$i | $P | $Q | $q")
 		
 		if Q_anterior == 1
 			break
 		else 
 			push!(fcs, q)
 		end
+
+		println("$i | $P | $Q | $q")
 	end
 
 	return fcs
@@ -152,8 +153,8 @@ md"""
 Sea $p$ el factor primo que tiene mayor periodo.
 1. Calcula los convergentes de $p$.
 2. Calcula las soluciones de las ecuaciones de Pell, $x^2 - py^2 = \pm 1$
-3. Calcula las unidades del anillo de enteros cuadráticos $\mathbb{Z}[p]$.
-4. ¿Es $\mathbb{Z}[p]$ el anillo de enteros del cuerpo $\mathbb{Q}[p]$? 
+3. Calcula las unidades del anillo de enteros cuadráticos $\mathbb{Z}[\sqrt{p}]$.
+4. ¿Es $\mathbb{Z}[\sqrt{p}]$ el anillo de enteros del cuerpo $\mathbb{Q}[\sqrt{p}]$? 
 """
 
 # ╔═╡ 6d379883-3912-430d-b03f-40e0752787e5
@@ -232,7 +233,7 @@ function ecuacion_Pell(d)
 			break
 		end
 
-		push!(indices_posibles_sols, r * i - 1)
+		push!(indices_posibles_sols, r * i)
 
 	end
 
@@ -242,19 +243,146 @@ function ecuacion_Pell(d)
 	soluciones = []
 
 	for i in indices_posibles_sols
-		x = numerator(conv[i])
-		y = denominator(conv[i])
+		push!(soluciones, 
+			(numerator(conv[i]), denominator(conv[i]))
+		)
+	end
+	return soluciones
+end
 
-		if abs(x^2 - d*y^2) == 1
+# ╔═╡ 68e13fff-d841-401a-aa47-72b8c3a344ae
+function ecuacion_generica(d, N)
+	conv = convergentes(d)
+	#popfirst!(conv)
+	soluciones = []
+
+	@info conv
+
+	for fraccion in conv
+		x = numerator(fraccion)
+		y = denominator(fraccion)
+
+		if abs(x^2 - d*y^2) == N
 			push!(soluciones, (x, y)) 
 		end
 	end
 
 	return soluciones
+
 end
 
-# ╔═╡ a9986af5-cf31-4345-b17b-5ef483682d86
-ecuacion_Pell(p)
+# ╔═╡ c9106827-103a-4f96-a53e-ba6b631a2b95
+paula = 4583
+
+# ╔═╡ 804d767b-8b39-4ce1-a1c7-6544043cea79
+convergentes(21), FCS(29)
+
+# ╔═╡ 77716439-b49b-4dc5-9a88-e0ccb22dbbfd
+with_terminal() do 
+	FCS(paula)
+end
+
+# ╔═╡ a9a4cfb7-d098-4d52-923e-8165039f4336
+function FCS_convergentes(d, t = 50)
+	P = 0 
+	Q = 1 
+	sqrt_d_entera = raiz_entera(d)
+	q = sqrt_d_entera
+
+	fcs = [q]
+
+	A_anterior2 = 1
+	A_anterior  = q
+
+	B_anterior2 = 0
+	B_anterior =  1
+	convergentes = [q//1]
+	
+	i = 0 
+
+    println("Paso | P_i | Q_i | q_i")
+    println("$i | $P | $Q | $q")
+
+	i = 1 
+	P = q * Q - P 
+	Q_anterior = Q
+	Q = div(d - P^2, Q)
+	q = div(P + sqrt_d_entera, Q)
+
+	push!(fcs, q)
+
+	A = q * A_anterior + A_anterior2
+	B = q * B_anterior + B_anterior2
+
+	A_anterior2 = A_anterior
+	A_anterior = A
+	
+	B_anterior2 = B_anterior
+	B_anterior = B
+
+	push!(convergentes, A//B)
+
+
+	guardados = []
+	println("$i | $P | $Q | $q")
+
+	while true
+		i = i + 1
+		
+		P_anterior = P 
+		P = q * Q - P 
+		
+		Q_anterior2 = Q_anterior
+		Q_anterior = Q
+
+		Q = Q_anterior2 + q * (P_anterior - P)
+		q = div(P + sqrt_d_entera, Q)
+
+		if i == t
+			break
+		else 
+			push!(fcs, q)
+		end
+
+		A = q * A_anterior + A_anterior2
+		B = q * B_anterior + B_anterior2
+
+		A_anterior2 = A_anterior
+		A_anterior = A
+		
+		B_anterior2 = B_anterior
+		B_anterior = B
+
+		push!(convergentes, A//B)
+
+		if Q == 4
+			push!(guardados, "($A_anterior + $B_anterior * sqrt($d))/2")
+		end
+		
+
+
+
+		println("$i | $P | $Q | $q")
+	end
+
+	return fcs, convergentes, guardados
+end
+
+# ╔═╡ e7106747-d918-493d-93d9-2ee3befe071e
+FCS_convergentes(paula)
+
+# ╔═╡ f15a3d1d-be55-4daf-902b-4880dfce7cb4
+FCS_convergentes(21)
+
+# ╔═╡ 543421df-05e4-4072-bd6c-5fa93e4fa0e1
+periodo_raiz_irracional(29), FCS_convergentes(29, 2*periodo_raiz_irracional(29) + 2)
+
+# ╔═╡ 9978a09d-ddd8-4d24-b05e-6f42ad9eb26d
+
+periodo_raiz_irracional(21), FCS_convergentes(21, 2*periodo_raiz_irracional(29) + 2)
+
+# ╔═╡ 3ea14145-94ec-4922-88b1-40e0085b93b1
+FCS(21)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -651,6 +779,15 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═4d064a97-1ae3-4d82-8d0d-06bfc89c3bf6
 # ╠═b14ad0dd-a3d7-40d7-a2c6-6ba79370a47f
 # ╠═ba8876c9-26aa-433a-ade7-16b9335ecf72
-# ╠═a9986af5-cf31-4345-b17b-5ef483682d86
+# ╠═68e13fff-d841-401a-aa47-72b8c3a344ae
+# ╠═c9106827-103a-4f96-a53e-ba6b631a2b95
+# ╠═804d767b-8b39-4ce1-a1c7-6544043cea79
+# ╠═77716439-b49b-4dc5-9a88-e0ccb22dbbfd
+# ╠═a9a4cfb7-d098-4d52-923e-8165039f4336
+# ╠═e7106747-d918-493d-93d9-2ee3befe071e
+# ╠═f15a3d1d-be55-4daf-902b-4880dfce7cb4
+# ╠═543421df-05e4-4072-bd6c-5fa93e4fa0e1
+# ╠═9978a09d-ddd8-4d24-b05e-6f42ad9eb26d
+# ╠═3ea14145-94ec-4922-88b1-40e0085b93b1
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
