@@ -48,8 +48,11 @@ p2 = last(first(factores))
 # ╔═╡ 0b6feb51-6448-4ec1-9564-2cdc26d0e275
 lucas_lehmer(p1), lucas_lehmer(p2)
 
+# ╔═╡ 73d69c7c-7c09-4ae9-90fa-6e50d385a71d
+isprime(p1), isprime(p2)
+
 # ╔═╡ d49e8ca6-b8d3-43f3-b44d-83ec59ee70c4
-md"""Por Lucas-Lehmer, se cumple que son primos.
+md"""Por Lucas-Lehmer, es muy probable que sean primos. Y de todas formas, lo verificamos con las funciones integradas del lenguaje para asegurarnos.
 
 ## Apartado 2 
 
@@ -61,10 +64,6 @@ Vamos a calcular ahora sus partes enteras con el algoritmo de raíz entera. Para
 Calcula la parte entera de la raíz de n
 """
 function raiz_entera(n)
-	if n <= 4
-		return 
-	end
-
 	a =	iseven(n) ? div(n, 2) : div(n+1, 2)
 	b = div(a^2 + n, 2*a)
 	i = 0 
@@ -79,17 +78,11 @@ function raiz_entera(n)
 	return a
 end
 
-# ╔═╡ 64e23486-b9a3-42a1-be6a-9b5213a4ceb0
-raiz_entera(101)
-
 # ╔═╡ 6e054b14-21a6-4386-98ea-9d37a0e4ea88
 md"Aplicándolo a nuestros primos $p_1$  y $p_2$:"
 
 # ╔═╡ f63b34b4-7e13-4a22-b7ee-273a939bf508
-raiz_entera(p1)
-
-# ╔═╡ cd592d3d-6006-4346-9236-a4d3460dd096
-raiz_entera(p2)
+raiz_entera(p1), raiz_entera(p2)
 
 # ╔═╡ f68fce17-e50e-4ca3-9875-9d37e3412eb2
 md"""
@@ -162,6 +155,106 @@ Sea $p$ el factor primo que tiene mayor periodo.
 3. Calcula las unidades del anillo de enteros cuadráticos $\mathbb{Z}[p]$.
 4. ¿Es $\mathbb{Z}[p]$ el anillo de enteros del cuerpo $\mathbb{Q}[p]$? 
 """
+
+# ╔═╡ 6d379883-3912-430d-b03f-40e0752787e5
+"""
+Calcula el periodo de una FCS de la forma sqrt(d)
+"""
+function periodo_raiz_irracional(d)
+	return length(FCS(d)) - 1
+end
+
+# ╔═╡ 904bddae-3602-4b13-bc13-ffedba08c2f3
+md"""
+Primero, tomemos el primo con mayor periodo:
+"""
+
+# ╔═╡ 480d195c-26b1-4513-aaa6-801ccfeb9941
+periodo_raiz_irracional(p1), periodo_raiz_irracional(p2)
+
+# ╔═╡ e3990510-2d29-457d-b64c-1322ce057a90
+p = periodo_raiz_irracional(p1) > periodo_raiz_irracional(p2) ? p1 : p2
+
+# ╔═╡ df7cc798-3319-4fd7-aea6-19b159589c2a
+md"""
+## Apartado 1
+
+Calculemos los convergentes de $p$
+"""
+
+# ╔═╡ 4d064a97-1ae3-4d82-8d0d-06bfc89c3bf6
+"""
+Calcula los convergentes de d
+"""
+function convergentes(d)
+	fcs = FCS(d)
+	
+	A_anterior2 = 1 		    # A_-1
+	A_anterior  = first(fcs)	# A_0
+
+	B_anterior2 = 0 	# B_-1
+	B_anterior  = 1   	# B_0 
+
+	convergentes = [first(fcs)//1]
+
+	for i in 2:length(fcs)
+		A = fcs[i] * A_anterior + A_anterior2
+		B = fcs[i] * B_anterior + B_anterior2
+
+		A_anterior2 = A_anterior
+		A_anterior = A
+		
+		B_anterior2 = B_anterior
+		B_anterior = B
+
+		push!(convergentes, A//B)
+	end
+
+	return convergentes
+end
+
+# ╔═╡ b14ad0dd-a3d7-40d7-a2c6-6ba79370a47f
+convergentes(p)
+
+# ╔═╡ ba8876c9-26aa-433a-ade7-16b9335ecf72
+"""
+Calcula las soluciones a la ecuación de Pell `x^2 - d y^2 = -+ 1`
+"""
+function ecuacion_Pell(d)
+	conv = convergentes(d)
+	r = periodo_raiz_irracional(d)
+
+	indices_posibles_sols = []
+
+	# Corolario 10
+	for i in 1:length(conv)
+		if r * i > length(conv)
+			break
+		end
+
+		push!(indices_posibles_sols, r * i - 1)
+
+	end
+
+	@info indices_posibles_sols
+	@info length(conv)
+	
+	soluciones = []
+
+	for i in indices_posibles_sols
+		x = numerator(conv[i])
+		y = denominator(conv[i])
+
+		if abs(x^2 - d*y^2) == 1
+			push!(soluciones, (x, y)) 
+		end
+	end
+
+	return soluciones
+end
+
+# ╔═╡ a9986af5-cf31-4345-b17b-5ef483682d86
+ecuacion_Pell(p)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -540,16 +633,24 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─57c7e721-020b-4284-9daa-350d8f23f618
 # ╟─673cdf01-eb38-4be8-8c55-1222d669b849
 # ╠═0b6feb51-6448-4ec1-9564-2cdc26d0e275
+# ╠═73d69c7c-7c09-4ae9-90fa-6e50d385a71d
 # ╟─d49e8ca6-b8d3-43f3-b44d-83ec59ee70c4
 # ╠═28dba051-1fd8-4ee5-9621-b360f019209c
-# ╠═64e23486-b9a3-42a1-be6a-9b5213a4ceb0
 # ╟─6e054b14-21a6-4386-98ea-9d37a0e4ea88
 # ╠═f63b34b4-7e13-4a22-b7ee-273a939bf508
-# ╠═cd592d3d-6006-4346-9236-a4d3460dd096
 # ╟─f68fce17-e50e-4ca3-9875-9d37e3412eb2
 # ╠═1b887f64-944e-49bb-84c0-a70e81e0d8cd
 # ╠═cfa3f294-208a-4e96-ac72-2e7dafbf9e3b
 # ╠═f8af2039-fd2c-4c7d-8225-e4eb55226323
 # ╟─54f11d9d-da5a-4c17-9623-50806eb25117
+# ╠═6d379883-3912-430d-b03f-40e0752787e5
+# ╟─904bddae-3602-4b13-bc13-ffedba08c2f3
+# ╠═480d195c-26b1-4513-aaa6-801ccfeb9941
+# ╟─e3990510-2d29-457d-b64c-1322ce057a90
+# ╟─df7cc798-3319-4fd7-aea6-19b159589c2a
+# ╠═4d064a97-1ae3-4d82-8d0d-06bfc89c3bf6
+# ╠═b14ad0dd-a3d7-40d7-a2c6-6ba79370a47f
+# ╠═ba8876c9-26aa-433a-ade7-16b9335ecf72
+# ╠═a9986af5-cf31-4345-b17b-5ef483682d86
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
