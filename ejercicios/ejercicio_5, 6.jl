@@ -73,7 +73,7 @@ function raiz_entera(n)
 		a = b
 		b = div(a^2 + n, 2*a)
 		i = i + 1
-		println("i, a, b = $i, $a, $b")
+		#println("i, a, b = $i, $a, $b")
 	end
 
 	return a
@@ -190,15 +190,15 @@ Calcula los convergentes de d
 function convergentes(d)
 	fcs = FCS(d)
 	
-	A_anterior2 = 1 		    # A_-1
-	A_anterior  = first(fcs)	# A_0
+	A_anterior2::BigInt = 1 		    # A_-1
+	A_anterior::BigInt  = first(fcs)	# A_0
 
-	B_anterior2 = 0 	# B_-1
-	B_anterior  = 1   	# B_0 
+	B_anterior2::BigInt = 0 	# B_-1
+	B_anterior::BigInt  = 1   	# B_0 
 
-	convergentes = [first(fcs)//1]
+	convergentes = [(convert(BigInt, first(fcs)), convert(BigInt, 1))]
 
-	for i in 2:length(fcs)
+	for i in 2:length(fcs)-1
 		A = fcs[i] * A_anterior + A_anterior2
 		B = fcs[i] * B_anterior + B_anterior2
 
@@ -208,7 +208,78 @@ function convergentes(d)
 		B_anterior2 = B_anterior
 		B_anterior = B
 
-		push!(convergentes, A//B)
+		push!(convergentes, (A, B))
+	end
+
+	return convergentes
+end
+
+# ╔═╡ a9a4cfb7-d098-4d52-923e-8165039f4336
+function convergentes(d, t)
+	P = 0 
+	Q = 1 
+	sqrt_d_entera = raiz_entera(d)
+	q = sqrt_d_entera
+
+	fcs = [q]
+
+	A_anterior2::BigInt = 1
+	A_anterior::BigInt  = q
+
+	B_anterior2::BigInt = 0
+	B_anterior::BigInt =  1
+	convergentes = [(convert(BigInt, q), convert(BigInt, 1))]
+	
+	i = 0 
+
+	i = 1 
+	P = q * Q - P 
+	Q_anterior = Q
+	Q = div(d - P^2, Q)
+	q = div(P + sqrt_d_entera, Q)
+
+
+	A::BigInt = q * A_anterior + A_anterior2
+	B::BigInt = q * B_anterior + B_anterior2
+
+	A_anterior2 = A_anterior
+	A_anterior = A
+	
+	B_anterior2 = B_anterior
+	B_anterior = B
+
+	push!(convergentes, (A, B))
+
+
+	guardados = []
+
+	while true
+		i = i + 1
+		
+		P_anterior = P 
+		P = q * Q - P 
+		
+		Q_anterior2 = Q_anterior
+		Q_anterior = Q
+
+		Q = Q_anterior2 + q * (P_anterior - P)
+		q = div(P + sqrt_d_entera, Q)
+
+		if i == t
+			break
+		end
+
+		A = q * A_anterior + A_anterior2
+		B = q * B_anterior + B_anterior2
+
+		A_anterior2 = A_anterior
+		A_anterior = A
+		
+		B_anterior2 = B_anterior
+		B_anterior = B
+
+		push!(convergentes, (A, B))
+		#println("[$i](q = $q) $A^2 - d*$B^2 = ", A^2 - d*B^2)
 	end
 
 	return convergentes
@@ -271,118 +342,56 @@ function ecuacion_generica(d, N)
 
 end
 
-# ╔═╡ c9106827-103a-4f96-a53e-ba6b631a2b95
-paula = 4583
-
-# ╔═╡ 804d767b-8b39-4ce1-a1c7-6544043cea79
-convergentes(21), FCS(29)
-
-# ╔═╡ 77716439-b49b-4dc5-9a88-e0ccb22dbbfd
+# ╔═╡ 60de4a9e-0361-44e8-bf6a-e3a70e57ec6c
 with_terminal() do 
-	FCS(paula)
+	convergentes(p, 1000)
 end
 
-# ╔═╡ a9a4cfb7-d098-4d52-923e-8165039f4336
-function FCS_convergentes(d, t = 50)
-	P = 0 
-	Q = 1 
-	sqrt_d_entera = raiz_entera(d)
-	q = sqrt_d_entera
+# ╔═╡ a803ca75-945d-45c8-9f44-133775e29ffb
+periodo_raiz_irracional(p)
 
-	fcs = [q]
+# ╔═╡ 30092553-8edd-4ec8-8f0c-47134e65c4ea
+md"Como el periodo de $p$ es par, la solución a $x^2 - p*y^2 = -1$ viene dada por $(A_{r-1}, B_{r-1})$"
 
-	A_anterior2 = 1
-	A_anterior  = q
+# ╔═╡ dc6a254a-0ede-4cf6-af1b-d62765b30490
+convergente = convergentes(p, periodo_raiz_irracional(p))[periodo_raiz_irracional(p)]
 
-	B_anterior2 = 0
-	B_anterior =  1
-	convergentes = [q//1]
-	
-	i = 0 
+# ╔═╡ 9454430c-c522-4659-b2e1-64f2792a2650
+a, b = convergente[1], convergente[2]
 
-    println("Paso | P_i | Q_i | q_i")
-    println("$i | $P | $Q | $q")
+# ╔═╡ e5e869e4-241b-4ced-948e-005cf5269c00
+md"Comprobamos que se cumple:"
 
-	i = 1 
-	P = q * Q - P 
-	Q_anterior = Q
-	Q = div(d - P^2, Q)
-	q = div(P + sqrt_d_entera, Q)
+# ╔═╡ 20c36cbe-fa47-4fa1-ab1a-af1e07e1cc75
+a^2 - p*b^2
 
-	push!(fcs, q)
+# ╔═╡ b771c1c0-c282-4dfc-954e-5981ac78164c
+md"""
+Por lo tanto, cualquier unidad del anillo cuadrático $\mathbb{Z}[\sqrt{p}] = \mathbb{Z}[\sqrt{7753}]$ es una potencia (excepto signo) de $a + b\sqrt{7753}$:
 
-	A = q * A_anterior + A_anterior2
-	B = q * B_anterior + B_anterior2
+$$x + y \sqrt{7753} = \pm (a + b\sqrt{7753})^n$$
+"""
 
-	A_anterior2 = A_anterior
-	A_anterior = A
-	
-	B_anterior2 = B_anterior
-	B_anterior = B
+# ╔═╡ ab9f3694-c27b-49ba-9637-96a523b902c1
+md"# Ejemplo de verificación del profesor"
 
-	push!(convergentes, A//B)
+# ╔═╡ 749a567d-0f32-4914-a658-9b5e794415a1
+profesor = 3613
 
+# ╔═╡ 93fff8c6-03c7-4121-8e3c-7605de96c6cf
+FCS(profesor)
 
-	guardados = []
-	println("$i | $P | $Q | $q")
+# ╔═╡ 0a583da5-4ff3-4ad3-9a72-c8d0b54197b8
+periodo_raiz_irracional(profesor)
 
-	while true
-		i = i + 1
-		
-		P_anterior = P 
-		P = q * Q - P 
-		
-		Q_anterior2 = Q_anterior
-		Q_anterior = Q
+# ╔═╡ ec079971-0bcf-4bca-b959-7b90dcd19481
+convergentes(profesor, periodo_raiz_irracional(profesor) + 1)
 
-		Q = Q_anterior2 + q * (P_anterior - P)
-		q = div(P + sqrt_d_entera, Q)
+# ╔═╡ 50cb5baf-0884-4fcd-8f41-20dba40212a8
+prof_conv = convergentes(profesor, periodo_raiz_irracional(profesor))[periodo_raiz_irracional(profesor)]
 
-		if i == t
-			break
-		else 
-			push!(fcs, q)
-		end
-
-		A = q * A_anterior + A_anterior2
-		B = q * B_anterior + B_anterior2
-
-		A_anterior2 = A_anterior
-		A_anterior = A
-		
-		B_anterior2 = B_anterior
-		B_anterior = B
-
-		push!(convergentes, A//B)
-
-		if Q == 4
-			push!(guardados, "($A_anterior + $B_anterior * sqrt($d))/2")
-		end
-		
-
-
-
-		println("$i | $P | $Q | $q")
-	end
-
-	return fcs, convergentes, guardados
-end
-
-# ╔═╡ e7106747-d918-493d-93d9-2ee3befe071e
-FCS_convergentes(paula)
-
-# ╔═╡ f15a3d1d-be55-4daf-902b-4880dfce7cb4
-FCS_convergentes(21)
-
-# ╔═╡ 543421df-05e4-4072-bd6c-5fa93e4fa0e1
-periodo_raiz_irracional(29), FCS_convergentes(29, 2*periodo_raiz_irracional(29) + 2)
-
-# ╔═╡ 9978a09d-ddd8-4d24-b05e-6f42ad9eb26d
-
-periodo_raiz_irracional(21), FCS_convergentes(21, 2*periodo_raiz_irracional(29) + 2)
-
-# ╔═╡ 3ea14145-94ec-4922-88b1-40e0085b93b1
-FCS(21)
+# ╔═╡ e92ccfdf-f374-40ad-8ac8-d55df6b787ec
+convergentes(profesor)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -778,16 +787,23 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─df7cc798-3319-4fd7-aea6-19b159589c2a
 # ╠═4d064a97-1ae3-4d82-8d0d-06bfc89c3bf6
 # ╠═b14ad0dd-a3d7-40d7-a2c6-6ba79370a47f
-# ╠═ba8876c9-26aa-433a-ade7-16b9335ecf72
-# ╠═68e13fff-d841-401a-aa47-72b8c3a344ae
-# ╠═c9106827-103a-4f96-a53e-ba6b631a2b95
-# ╠═804d767b-8b39-4ce1-a1c7-6544043cea79
-# ╠═77716439-b49b-4dc5-9a88-e0ccb22dbbfd
-# ╠═a9a4cfb7-d098-4d52-923e-8165039f4336
-# ╠═e7106747-d918-493d-93d9-2ee3befe071e
-# ╠═f15a3d1d-be55-4daf-902b-4880dfce7cb4
-# ╠═543421df-05e4-4072-bd6c-5fa93e4fa0e1
-# ╠═9978a09d-ddd8-4d24-b05e-6f42ad9eb26d
-# ╠═3ea14145-94ec-4922-88b1-40e0085b93b1
+# ╟─ba8876c9-26aa-433a-ade7-16b9335ecf72
+# ╟─68e13fff-d841-401a-aa47-72b8c3a344ae
+# ╟─a9a4cfb7-d098-4d52-923e-8165039f4336
+# ╠═60de4a9e-0361-44e8-bf6a-e3a70e57ec6c
+# ╠═a803ca75-945d-45c8-9f44-133775e29ffb
+# ╟─30092553-8edd-4ec8-8f0c-47134e65c4ea
+# ╠═dc6a254a-0ede-4cf6-af1b-d62765b30490
+# ╠═9454430c-c522-4659-b2e1-64f2792a2650
+# ╟─e5e869e4-241b-4ced-948e-005cf5269c00
+# ╠═20c36cbe-fa47-4fa1-ab1a-af1e07e1cc75
+# ╟─b771c1c0-c282-4dfc-954e-5981ac78164c
+# ╠═ab9f3694-c27b-49ba-9637-96a523b902c1
+# ╟─749a567d-0f32-4914-a658-9b5e794415a1
+# ╠═93fff8c6-03c7-4121-8e3c-7605de96c6cf
+# ╠═0a583da5-4ff3-4ad3-9a72-c8d0b54197b8
+# ╠═ec079971-0bcf-4bca-b959-7b90dcd19481
+# ╠═50cb5baf-0884-4fcd-8f41-20dba40212a8
+# ╠═e92ccfdf-f374-40ad-8ac8-d55df6b787ec
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
