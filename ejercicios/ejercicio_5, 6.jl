@@ -38,23 +38,21 @@ md"Vamos a factorizar $n$ usando $\rho$ de Polard:"
 factores = ρ_Polard(n, x -> x^2 + 1, 5000)
 
 # ╔═╡ 866bdcd2-d61f-42db-bfa2-cadad0c078a2
-md"""Se han necesitado 1113 iteraciones. Vamos a comprobar que son primos: """
+md"""Se han necesitado 1113 iteraciones. Como ambos son menores que 10000, podemos comprobar directamente que son primos usando la lista provista. 
+
+En este caso, por simplificar, usaremos la función interna del lenguaje:"""
 
 # ╔═╡ 57c7e721-020b-4284-9daa-350d8f23f618
-p1 = first(first(factores))
+p1 = maximum(first(factores))
 
 # ╔═╡ 673cdf01-eb38-4be8-8c55-1222d669b849
-p2 = last(first(factores))
-
-# ╔═╡ 0b6feb51-6448-4ec1-9564-2cdc26d0e275
-lucas_lehmer(p1), lucas_lehmer(p2)
+p2 = minimum(first(factores))
 
 # ╔═╡ 73d69c7c-7c09-4ae9-90fa-6e50d385a71d
 isprime(p1), isprime(p2)
 
 # ╔═╡ d49e8ca6-b8d3-43f3-b44d-83ec59ee70c4
-md"""Por Lucas-Lehmer, es muy probable que sean primos. Y de todas formas, lo verificamos con las funciones integradas del lenguaje para asegurarnos.
-
+md"""
 ## Apartado 2 
 
 Vamos a calcular ahora sus partes enteras con el algoritmo de raíz entera. Para ello, definimos la siguiente función:
@@ -68,12 +66,14 @@ function raiz_entera(n)
 	a =	iseven(n) ? div(n, 2) : div(n+1, 2)
 	b = div(a^2 + n, 2*a)
 	i = 0 
+	
+	#println("[$i] a = $a, b = $b")
 
 	while a > b
 		a = b
 		b = div(a^2 + n, 2*a)
 		i = i + 1
-		#println("i, a, b = $i, $a, $b")
+		#println("[$i] a = $a, b = $b")
 	end
 
 	return a
@@ -85,6 +85,12 @@ md"Aplicándolo a nuestros primos $p_1$  y $p_2$:"
 # ╔═╡ f63b34b4-7e13-4a22-b7ee-273a939bf508
 raiz_entera(p1), raiz_entera(p2)
 
+# ╔═╡ 14886108-a8d8-4139-8bf5-c4e106723e77
+md"Podemos verificar que se calcula correctamente usando las funciones integradas del lenguaje:"
+
+# ╔═╡ fe30d560-f7fe-4f6c-8560-4bb1b5aced25
+floor(sqrt(p1)), floor(sqrt(p2))
+
 # ╔═╡ f68fce17-e50e-4ca3-9875-9d37e3412eb2
 md"""
 ## Apartado 3
@@ -93,6 +99,9 @@ Pasemos a calcular las fracciones continuas simples. Como estamos en el caso de 
 """
 
 # ╔═╡ 1b887f64-944e-49bb-84c0-a70e81e0d8cd
+"""
+Calcula la fracción continua simple de sqrt(d)
+"""
 function FCS(d)
 	P = 0 
 	Q = 1 
@@ -140,23 +149,6 @@ function FCS(d)
 	return fcs
 end
 
-# ╔═╡ cfa3f294-208a-4e96-ac72-2e7dafbf9e3b
-FCS(p1)
-
-# ╔═╡ f8af2039-fd2c-4c7d-8225-e4eb55226323
-FCS(p2)
-
-# ╔═╡ 54f11d9d-da5a-4c17-9623-50806eb25117
-md"""
-# Ejercicio 6
-
-Sea $p$ el factor primo que tiene mayor periodo.
-1. Calcula los convergentes de $p$.
-2. Calcula las soluciones de las ecuaciones de Pell, $x^2 - py^2 = \pm 1$
-3. Calcula las unidades del anillo de enteros cuadráticos $\mathbb{Z}[\sqrt{p}]$.
-4. ¿Es $\mathbb{Z}[\sqrt{p}]$ el anillo de enteros del cuerpo $\mathbb{Q}[\sqrt{p}]$? 
-"""
-
 # ╔═╡ 6d379883-3912-430d-b03f-40e0752787e5
 """
 Calcula el periodo de una FCS de la forma sqrt(d)
@@ -165,13 +157,32 @@ function periodo_raiz_irracional(d)
 	return length(FCS(d)) - 1
 end
 
+# ╔═╡ 42f6a7eb-22ec-4438-879e-7cf06982608f
+md"Únicamente mostraré las primeras salidas para $p1$"
+
+# ╔═╡ cfa3f294-208a-4e96-ac72-2e7dafbf9e3b
+with_terminal() do
+	periodo_raiz_irracional(p1), FCS(p1)
+end
+
+# ╔═╡ f8af2039-fd2c-4c7d-8225-e4eb55226323
+periodo_raiz_irracional(p2), FCS(p2)
+
+# ╔═╡ 54f11d9d-da5a-4c17-9623-50806eb25117
+md"""
+# Ejercicio 6
+
+Sea $p$ el factor primo que tiene mayor periodo.
+1. Calcula los convergentes de $\sqrt{p}$.
+2. Calcula las soluciones de las ecuaciones de Pell, $x^2 - py^2 = \pm 1$
+3. Calcula las unidades del anillo de enteros cuadráticos $\mathbb{Z}[\sqrt{p}]$.
+4. ¿Es $\mathbb{Z}[\sqrt{p}]$ el anillo de enteros del cuerpo $\mathbb{Q}[\sqrt{p}]$? 
+"""
+
 # ╔═╡ 904bddae-3602-4b13-bc13-ffedba08c2f3
 md"""
 Primero, tomemos el primo con mayor periodo:
 """
-
-# ╔═╡ 480d195c-26b1-4513-aaa6-801ccfeb9941
-periodo_raiz_irracional(p1), periodo_raiz_irracional(p2)
 
 # ╔═╡ e3990510-2d29-457d-b64c-1322ce057a90
 p = periodo_raiz_irracional(p1) > periodo_raiz_irracional(p2) ? p1 : p2
@@ -180,7 +191,7 @@ p = periodo_raiz_irracional(p1) > periodo_raiz_irracional(p2) ? p1 : p2
 md"""
 ## Apartado 1
 
-Calculemos los convergentes de $p$
+Calculemos los convergentes de $\sqrt{p}$
 """
 
 # ╔═╡ 4d064a97-1ae3-4d82-8d0d-06bfc89c3bf6
@@ -213,6 +224,13 @@ function convergentes(d)
 
 	return convergentes
 end
+
+# ╔═╡ d7255a7c-3438-4986-9b1b-7f8928597c74
+md"""
+# Apartado 2, 3
+
+Calculemos ahora las soluciones de la ecuación de Pell
+"""
 
 # ╔═╡ a9a4cfb7-d098-4d52-923e-8165039f4336
 function convergentes(d, t)
@@ -288,6 +306,59 @@ end
 # ╔═╡ b14ad0dd-a3d7-40d7-a2c6-6ba79370a47f
 convergentes(p)
 
+# ╔═╡ 30092553-8edd-4ec8-8f0c-47134e65c4ea
+md"Como el periodo de $p$ es par, la solución a $x^2 - p*y^2 = -1$ viene dada por $(A_{r-1}, B_{r-1})$"
+
+# ╔═╡ dc6a254a-0ede-4cf6-af1b-d62765b30490
+convergente = convergentes(p, periodo_raiz_irracional(p))[periodo_raiz_irracional(p)]
+
+# ╔═╡ 9454430c-c522-4659-b2e1-64f2792a2650
+a, b = convergente[1], convergente[2]
+
+# ╔═╡ e5e869e4-241b-4ced-948e-005cf5269c00
+md"Comprobamos que se cumple:"
+
+# ╔═╡ 20c36cbe-fa47-4fa1-ab1a-af1e07e1cc75
+a^2 - p*b^2
+
+# ╔═╡ b771c1c0-c282-4dfc-954e-5981ac78164c
+md"""
+Por lo tanto, cualquier unidad del anillo cuadrático $\mathbb{Z}[\sqrt{p}] = \mathbb{Z}[\sqrt{7753}]$ es una potencia (excepto signo) de $a + b\sqrt{7753}$:
+
+$$x + y \sqrt{7753} = \pm (a + b\sqrt{7753})^n$$
+"""
+
+# ╔═╡ a476e231-63c3-4f3f-b89d-5148c33bb316
+md"""
+## Apartado 4
+
+Nos preguntamos si $\mathbb{Z}[\sqrt{p}]$ es el anillo de enteros del cuerpo $\mathbb{Q}[\sqrt{p}]$
+"""
+
+# ╔═╡ b130b6fc-17a8-43b9-9e65-78cf1b4f1284
+mod(p, 4)
+
+# ╔═╡ ab9f3694-c27b-49ba-9637-96a523b902c1
+md"# Ejemplo de verificación del profesor"
+
+# ╔═╡ 749a567d-0f32-4914-a658-9b5e794415a1
+profesor = 3613
+
+# ╔═╡ 93fff8c6-03c7-4121-8e3c-7605de96c6cf
+FCS(profesor)
+
+# ╔═╡ 0a583da5-4ff3-4ad3-9a72-c8d0b54197b8
+periodo_raiz_irracional(profesor)
+
+# ╔═╡ ec079971-0bcf-4bca-b959-7b90dcd19481
+convergentes(profesor, periodo_raiz_irracional(profesor) + 1)
+
+# ╔═╡ 50cb5baf-0884-4fcd-8f41-20dba40212a8
+prof_conv = convergentes(profesor, periodo_raiz_irracional(profesor))[periodo_raiz_irracional(profesor)]
+
+# ╔═╡ e92ccfdf-f374-40ad-8ac8-d55df6b787ec
+convergentes(profesor)
+
 # ╔═╡ ba8876c9-26aa-433a-ade7-16b9335ecf72
 """
 Calcula las soluciones a la ecuación de Pell `x^2 - d y^2 = -+ 1`
@@ -341,57 +412,6 @@ function ecuacion_generica(d, N)
 	return soluciones
 
 end
-
-# ╔═╡ 60de4a9e-0361-44e8-bf6a-e3a70e57ec6c
-with_terminal() do 
-	convergentes(p, 1000)
-end
-
-# ╔═╡ a803ca75-945d-45c8-9f44-133775e29ffb
-periodo_raiz_irracional(p)
-
-# ╔═╡ 30092553-8edd-4ec8-8f0c-47134e65c4ea
-md"Como el periodo de $p$ es par, la solución a $x^2 - p*y^2 = -1$ viene dada por $(A_{r-1}, B_{r-1})$"
-
-# ╔═╡ dc6a254a-0ede-4cf6-af1b-d62765b30490
-convergente = convergentes(p, periodo_raiz_irracional(p))[periodo_raiz_irracional(p)]
-
-# ╔═╡ 9454430c-c522-4659-b2e1-64f2792a2650
-a, b = convergente[1], convergente[2]
-
-# ╔═╡ e5e869e4-241b-4ced-948e-005cf5269c00
-md"Comprobamos que se cumple:"
-
-# ╔═╡ 20c36cbe-fa47-4fa1-ab1a-af1e07e1cc75
-a^2 - p*b^2
-
-# ╔═╡ b771c1c0-c282-4dfc-954e-5981ac78164c
-md"""
-Por lo tanto, cualquier unidad del anillo cuadrático $\mathbb{Z}[\sqrt{p}] = \mathbb{Z}[\sqrt{7753}]$ es una potencia (excepto signo) de $a + b\sqrt{7753}$:
-
-$$x + y \sqrt{7753} = \pm (a + b\sqrt{7753})^n$$
-"""
-
-# ╔═╡ ab9f3694-c27b-49ba-9637-96a523b902c1
-md"# Ejemplo de verificación del profesor"
-
-# ╔═╡ 749a567d-0f32-4914-a658-9b5e794415a1
-profesor = 3613
-
-# ╔═╡ 93fff8c6-03c7-4121-8e3c-7605de96c6cf
-FCS(profesor)
-
-# ╔═╡ 0a583da5-4ff3-4ad3-9a72-c8d0b54197b8
-periodo_raiz_irracional(profesor)
-
-# ╔═╡ ec079971-0bcf-4bca-b959-7b90dcd19481
-convergentes(profesor, periodo_raiz_irracional(profesor) + 1)
-
-# ╔═╡ 50cb5baf-0884-4fcd-8f41-20dba40212a8
-prof_conv = convergentes(profesor, periodo_raiz_irracional(profesor))[periodo_raiz_irracional(profesor)]
-
-# ╔═╡ e92ccfdf-f374-40ad-8ac8-d55df6b787ec
-convergentes(profesor)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -769,35 +789,35 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─866bdcd2-d61f-42db-bfa2-cadad0c078a2
 # ╟─57c7e721-020b-4284-9daa-350d8f23f618
 # ╟─673cdf01-eb38-4be8-8c55-1222d669b849
-# ╠═0b6feb51-6448-4ec1-9564-2cdc26d0e275
 # ╠═73d69c7c-7c09-4ae9-90fa-6e50d385a71d
 # ╟─d49e8ca6-b8d3-43f3-b44d-83ec59ee70c4
-# ╠═28dba051-1fd8-4ee5-9621-b360f019209c
+# ╟─28dba051-1fd8-4ee5-9621-b360f019209c
 # ╟─6e054b14-21a6-4386-98ea-9d37a0e4ea88
 # ╠═f63b34b4-7e13-4a22-b7ee-273a939bf508
+# ╟─14886108-a8d8-4139-8bf5-c4e106723e77
+# ╠═fe30d560-f7fe-4f6c-8560-4bb1b5aced25
 # ╟─f68fce17-e50e-4ca3-9875-9d37e3412eb2
-# ╠═1b887f64-944e-49bb-84c0-a70e81e0d8cd
+# ╟─1b887f64-944e-49bb-84c0-a70e81e0d8cd
+# ╟─6d379883-3912-430d-b03f-40e0752787e5
+# ╟─42f6a7eb-22ec-4438-879e-7cf06982608f
 # ╠═cfa3f294-208a-4e96-ac72-2e7dafbf9e3b
 # ╠═f8af2039-fd2c-4c7d-8225-e4eb55226323
 # ╟─54f11d9d-da5a-4c17-9623-50806eb25117
-# ╠═6d379883-3912-430d-b03f-40e0752787e5
 # ╟─904bddae-3602-4b13-bc13-ffedba08c2f3
-# ╠═480d195c-26b1-4513-aaa6-801ccfeb9941
-# ╟─e3990510-2d29-457d-b64c-1322ce057a90
+# ╠═e3990510-2d29-457d-b64c-1322ce057a90
 # ╟─df7cc798-3319-4fd7-aea6-19b159589c2a
 # ╠═4d064a97-1ae3-4d82-8d0d-06bfc89c3bf6
 # ╠═b14ad0dd-a3d7-40d7-a2c6-6ba79370a47f
-# ╟─ba8876c9-26aa-433a-ade7-16b9335ecf72
-# ╟─68e13fff-d841-401a-aa47-72b8c3a344ae
+# ╟─d7255a7c-3438-4986-9b1b-7f8928597c74
 # ╟─a9a4cfb7-d098-4d52-923e-8165039f4336
-# ╠═60de4a9e-0361-44e8-bf6a-e3a70e57ec6c
-# ╠═a803ca75-945d-45c8-9f44-133775e29ffb
 # ╟─30092553-8edd-4ec8-8f0c-47134e65c4ea
 # ╠═dc6a254a-0ede-4cf6-af1b-d62765b30490
 # ╠═9454430c-c522-4659-b2e1-64f2792a2650
 # ╟─e5e869e4-241b-4ced-948e-005cf5269c00
 # ╠═20c36cbe-fa47-4fa1-ab1a-af1e07e1cc75
 # ╟─b771c1c0-c282-4dfc-954e-5981ac78164c
+# ╟─a476e231-63c3-4f3f-b89d-5148c33bb316
+# ╠═b130b6fc-17a8-43b9-9e65-78cf1b4f1284
 # ╠═ab9f3694-c27b-49ba-9637-96a523b902c1
 # ╟─749a567d-0f32-4914-a658-9b5e794415a1
 # ╠═93fff8c6-03c7-4121-8e3c-7605de96c6cf
@@ -805,5 +825,7 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═ec079971-0bcf-4bca-b959-7b90dcd19481
 # ╠═50cb5baf-0884-4fcd-8f41-20dba40212a8
 # ╠═e92ccfdf-f374-40ad-8ac8-d55df6b787ec
+# ╟─ba8876c9-26aa-433a-ade7-16b9335ecf72
+# ╟─68e13fff-d841-401a-aa47-72b8c3a344ae
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
