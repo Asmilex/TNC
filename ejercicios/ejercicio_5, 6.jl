@@ -208,7 +208,7 @@ Calculemos los convergentes de $\sqrt{p}$
 
 # ╔═╡ 4d064a97-1ae3-4d82-8d0d-06bfc89c3bf6
 """
-Calcula los convergentes de d
+Calcula los r primeros convergentes de d, siendo r el periodo
 """
 function convergentes(d)
 	fcs = FCS(d)
@@ -316,7 +316,7 @@ convergentes(p, periodo_raiz_irracional(p) + 1)
 
 # ╔═╡ d7255a7c-3438-4986-9b1b-7f8928597c74
 md"""
-# Apartado 2, 3
+# Apartado 2
 
 Calculemos ahora las soluciones de la ecuación de Pell
 """
@@ -339,11 +339,19 @@ md"Comprobamos que se cumple:"
 # ╔═╡ 20c36cbe-fa47-4fa1-ab1a-af1e07e1cc75
 a^2 - p*b^2
 
+# ╔═╡ b8398648-aa34-48bf-8982-7f9d20d4b68c
+md"Y el corolario 10 nos da el resto de soluciones de la ecuación, que son los convergentes $(A_{n-1}, B_{n-1})$, siendo $n$ un múltiplo del periodo."
+
+# ╔═╡ 25468a97-1d02-4c4a-afd4-300fa237f727
+md"""
+# Apartado 3
+"""
+
 # ╔═╡ b771c1c0-c282-4dfc-954e-5981ac78164c
 md"""
-Por lo tanto, cualquier unidad del anillo cuadrático $\mathbb{Z}[\sqrt{p}] = \mathbb{Z}[\sqrt{7753}]$ es una potencia (excepto signo) de $a + b\sqrt{7753}$:
+Cualquier unidad del anillo cuadrático $\mathbb{Z}[\sqrt{p}] = \mathbb{Z}[\sqrt{7753}]$ es una potencia (excepto signo) de $a + b\sqrt{7753}$:
 
-$$x + y \sqrt{7753} = \pm (a + b\sqrt{7753})^n$$
+$$x + y \sqrt{7753} = \pm (a + b\sqrt{7753})^n \text{, n entero}$$
 """
 
 # ╔═╡ a476e231-63c3-4f3f-b89d-5148c33bb316
@@ -366,105 +374,6 @@ $$O_{\sqrt{d}} = \left\{m + n \frac{1 + \sqrt{p}}{2}\ \mid\ m, n \in \mathbb{Z}\
 
 Así que no se da lo que queríamos
 """
-
-# ╔═╡ ab9f3694-c27b-49ba-9637-96a523b902c1
-md"# Ejemplo de verificación del profesor"
-
-# ╔═╡ 749a567d-0f32-4914-a658-9b5e794415a1
-profesor = 3613
-
-# ╔═╡ 93fff8c6-03c7-4121-8e3c-7605de96c6cf
-FCS(profesor)
-
-# ╔═╡ 0a583da5-4ff3-4ad3-9a72-c8d0b54197b8
-periodo_raiz_irracional(profesor)
-
-# ╔═╡ ec079971-0bcf-4bca-b959-7b90dcd19481
-convergentes(profesor, periodo_raiz_irracional(profesor) + 1)
-
-# ╔═╡ 50cb5baf-0884-4fcd-8f41-20dba40212a8
-prof_conv = convergentes(profesor, periodo_raiz_irracional(profesor))[periodo_raiz_irracional(profesor)]
-
-# ╔═╡ e92ccfdf-f374-40ad-8ac8-d55df6b787ec
-convergentes(profesor)
-
-# ╔═╡ ba8876c9-26aa-433a-ade7-16b9335ecf72
-"""
-Calcula las soluciones a la ecuación de Pell `x^2 - d y^2 = -+ 1`
-"""
-function ecuacion_Pell(d)
-	conv = convergentes(d)
-	r = periodo_raiz_irracional(d)
-
-	indices_posibles_sols = []
-
-	# Corolario 10
-	for i in 1:length(conv)
-		if r * i > length(conv)
-			break
-		end
-
-		push!(indices_posibles_sols, r * i)
-
-	end
-
-	@info indices_posibles_sols
-	@info length(conv)
-	
-	soluciones = []
-
-	for i in indices_posibles_sols
-		push!(soluciones, 
-			(numerator(conv[i]), denominator(conv[i]))
-		)
-	end
-	return soluciones
-end
-
-# ╔═╡ 68e13fff-d841-401a-aa47-72b8c3a344ae
-function ecuacion_generica(d, N)
-	conv = convergentes(d)
-	#popfirst!(conv)
-	soluciones = []
-
-	@info conv
-
-	for fraccion in conv
-		x = numerator(fraccion)
-		y = denominator(fraccion)
-
-		if abs(x^2 - d*y^2) == N
-			push!(soluciones, (x, y)) 
-		end
-	end
-
-	return soluciones
-
-end
-
-# ╔═╡ 6f9e7229-ff35-4105-a9d6-33d7195e3705
-4 ∈	FCS(7789)
-
-# ╔═╡ 8247c6da-f25b-4ae5-8f77-1a55d514745b
-mod(7789, 4)
-
-# ╔═╡ f64861f1-ff00-4010-8af7-8b4165c02d0c
-convergentes(4583)
-
-# ╔═╡ bb419584-d565-46a7-934f-1f9d69555f9b
-aa, bb = convergentes(4583)[28][1], convergentes(4583)[28][2]
-
-# ╔═╡ eb450ea8-9c3f-4303-8b3d-8c878ef0c762
-aa^2 - 4583*bb^2
-
-# ╔═╡ 6329c754-5c4c-43a2-8ab2-d0436901a2f9
-convergentes(21), periodo_raiz_irracional(21)
-
-# ╔═╡ 7ff76dcb-59cf-4f9f-aab0-d43d521ad233
-convergentes(21, periodo_raiz_irracional(21) + 1)
-
-# ╔═╡ 45a4b075-3d78-4c1c-b1a1-0c693f59192d
-last(convergentes(21))[1]^2 - 21 * last(convergentes(21))[2]^2
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -860,7 +769,7 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─904bddae-3602-4b13-bc13-ffedba08c2f3
 # ╠═e3990510-2d29-457d-b64c-1322ce057a90
 # ╟─df7cc798-3319-4fd7-aea6-19b159589c2a
-# ╟─4d064a97-1ae3-4d82-8d0d-06bfc89c3bf6
+# ╠═4d064a97-1ae3-4d82-8d0d-06bfc89c3bf6
 # ╠═a9a4cfb7-d098-4d52-923e-8165039f4336
 # ╠═b14ad0dd-a3d7-40d7-a2c6-6ba79370a47f
 # ╟─d7255a7c-3438-4986-9b1b-7f8928597c74
@@ -870,26 +779,11 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═9454430c-c522-4659-b2e1-64f2792a2650
 # ╟─e5e869e4-241b-4ced-948e-005cf5269c00
 # ╠═20c36cbe-fa47-4fa1-ab1a-af1e07e1cc75
+# ╟─b8398648-aa34-48bf-8982-7f9d20d4b68c
+# ╟─25468a97-1d02-4c4a-afd4-300fa237f727
 # ╟─b771c1c0-c282-4dfc-954e-5981ac78164c
 # ╟─a476e231-63c3-4f3f-b89d-5148c33bb316
 # ╠═b130b6fc-17a8-43b9-9e65-78cf1b4f1284
 # ╟─08b18c25-3f80-4c15-9f4d-941339fdf366
-# ╠═ab9f3694-c27b-49ba-9637-96a523b902c1
-# ╟─749a567d-0f32-4914-a658-9b5e794415a1
-# ╠═93fff8c6-03c7-4121-8e3c-7605de96c6cf
-# ╠═0a583da5-4ff3-4ad3-9a72-c8d0b54197b8
-# ╠═ec079971-0bcf-4bca-b959-7b90dcd19481
-# ╠═50cb5baf-0884-4fcd-8f41-20dba40212a8
-# ╠═e92ccfdf-f374-40ad-8ac8-d55df6b787ec
-# ╟─ba8876c9-26aa-433a-ade7-16b9335ecf72
-# ╟─68e13fff-d841-401a-aa47-72b8c3a344ae
-# ╠═6f9e7229-ff35-4105-a9d6-33d7195e3705
-# ╠═8247c6da-f25b-4ae5-8f77-1a55d514745b
-# ╠═f64861f1-ff00-4010-8af7-8b4165c02d0c
-# ╠═bb419584-d565-46a7-934f-1f9d69555f9b
-# ╠═eb450ea8-9c3f-4303-8b3d-8c878ef0c762
-# ╠═7ff76dcb-59cf-4f9f-aab0-d43d521ad233
-# ╠═6329c754-5c4c-43a2-8ab2-d0436901a2f9
-# ╠═45a4b075-3d78-4c1c-b1a1-0c693f59192d
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
