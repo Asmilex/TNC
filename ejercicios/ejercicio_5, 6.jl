@@ -58,22 +58,27 @@ md"""
 Vamos a calcular ahora sus partes enteras con el algoritmo de raíz entera. Para ello, definimos la siguiente función:
 """
 
-# ╔═╡ 28dba051-1fd8-4ee5-9621-b360f019209c
+# ╔═╡ e06ab4ba-d657-4b57-a6c1-003f8170e7e5
 """
 Calcula la parte entera de la raíz de n
 """
-function raiz_entera(n)
+function raiz_entera(n, salida = false)
 	a =	iseven(n) ? div(n, 2) : div(n+1, 2)
 	b = div(a^2 + n, 2*a)
 	i = 0 
-	
-	#println("[$i] a = $a, b = $b")
+
+	if salida
+		println("[$i] a = $a, b = (a^2 + n) / (2a) = $b")
+	end
 
 	while a > b
 		a = b
 		b = div(a^2 + n, 2*a)
 		i = i + 1
-		#println("[$i] a = $a, b = $b")
+		
+		if salida
+			println("[$i] a = $a, b = $b")
+		end
 	end
 
 	return a
@@ -83,7 +88,14 @@ end
 md"Aplicándolo a nuestros primos $p_1$  y $p_2$:"
 
 # ╔═╡ f63b34b4-7e13-4a22-b7ee-273a939bf508
-raiz_entera(p1), raiz_entera(p2)
+with_terminal() do 
+	raiz_entera(p1, true)
+end
+
+# ╔═╡ f7fe093c-4c18-4470-b116-5fe59d7cb46e
+with_terminal() do 
+	raiz_entera(p2, true)
+end
 
 # ╔═╡ 14886108-a8d8-4139-8bf5-c4e106723e77
 md"Podemos verificar que se calcula correctamente usando las funciones integradas del lenguaje:"
@@ -225,14 +237,10 @@ function convergentes(d)
 	return convergentes
 end
 
-# ╔═╡ d7255a7c-3438-4986-9b1b-7f8928597c74
-md"""
-# Apartado 2, 3
-
-Calculemos ahora las soluciones de la ecuación de Pell
-"""
-
 # ╔═╡ a9a4cfb7-d098-4d52-923e-8165039f4336
+"""
+Calcula los t primeros convergentes de d
+"""
 function convergentes(d, t)
 	P = 0 
 	Q = 1 
@@ -304,13 +312,23 @@ function convergentes(d, t)
 end
 
 # ╔═╡ b14ad0dd-a3d7-40d7-a2c6-6ba79370a47f
-convergentes(p)
+convergentes(p, periodo_raiz_irracional(p) + 1)
+
+# ╔═╡ d7255a7c-3438-4986-9b1b-7f8928597c74
+md"""
+# Apartado 2, 3
+
+Calculemos ahora las soluciones de la ecuación de Pell
+"""
+
+# ╔═╡ 7a07876d-4e57-4bfc-981b-a15a2772515b
+periodo_raiz_irracional(p)
 
 # ╔═╡ 30092553-8edd-4ec8-8f0c-47134e65c4ea
-md"Como el periodo de $p$ es par, la solución a $x^2 - p*y^2 = -1$ viene dada por $(A_{r-1}, B_{r-1})$"
+md"Como el periodo de $p$ es impar, la solución a $x^2 - p*y^2 = -1$ viene dada por $(A_{r-1}, B_{r-1})$"
 
 # ╔═╡ dc6a254a-0ede-4cf6-af1b-d62765b30490
-convergente = convergentes(p, periodo_raiz_irracional(p))[periodo_raiz_irracional(p)]
+convergente = convergentes(p, periodo_raiz_irracional(p) + 1)[periodo_raiz_irracional(p)]
 
 # ╔═╡ 9454430c-c522-4659-b2e1-64f2792a2650
 a, b = convergente[1], convergente[2]
@@ -337,6 +355,17 @@ Nos preguntamos si $\mathbb{Z}[\sqrt{p}]$ es el anillo de enteros del cuerpo $\m
 
 # ╔═╡ b130b6fc-17a8-43b9-9e65-78cf1b4f1284
 mod(p, 4)
+
+# ╔═╡ 08b18c25-3f80-4c15-9f4d-941339fdf366
+md"""
+Como $p$ es congruente con 1 módulo 4, sabemos que el subanillo de enteros cuadráticos de $\mathbb{Q}(\sqrt{p})$ es 
+
+$$O_{\sqrt{d}} = \left\{m + n \frac{1 + \sqrt{p}}{2}\ \mid\ m, n \in \mathbb{Z}\right\} = \mathbb{Z}\left[\frac{1 + \sqrt{p}}{2}\right]$$
+
+*(Cuerpos cuadráticos y suc. de Lucas, 7. enteros cuadráticos)*
+
+Así que no se da lo que queríamos
+"""
 
 # ╔═╡ ab9f3694-c27b-49ba-9637-96a523b902c1
 md"# Ejemplo de verificación del profesor"
@@ -412,6 +441,30 @@ function ecuacion_generica(d, N)
 	return soluciones
 
 end
+
+# ╔═╡ 6f9e7229-ff35-4105-a9d6-33d7195e3705
+4 ∈	FCS(7789)
+
+# ╔═╡ 8247c6da-f25b-4ae5-8f77-1a55d514745b
+mod(7789, 4)
+
+# ╔═╡ f64861f1-ff00-4010-8af7-8b4165c02d0c
+convergentes(4583)
+
+# ╔═╡ bb419584-d565-46a7-934f-1f9d69555f9b
+aa, bb = convergentes(4583)[28][1], convergentes(4583)[28][2]
+
+# ╔═╡ eb450ea8-9c3f-4303-8b3d-8c878ef0c762
+aa^2 - 4583*bb^2
+
+# ╔═╡ 6329c754-5c4c-43a2-8ab2-d0436901a2f9
+convergentes(21), periodo_raiz_irracional(21)
+
+# ╔═╡ 7ff76dcb-59cf-4f9f-aab0-d43d521ad233
+convergentes(21, periodo_raiz_irracional(21) + 1)
+
+# ╔═╡ 45a4b075-3d78-4c1c-b1a1-0c693f59192d
+last(convergentes(21))[1]^2 - 21 * last(convergentes(21))[2]^2
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -791,13 +844,14 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─673cdf01-eb38-4be8-8c55-1222d669b849
 # ╠═73d69c7c-7c09-4ae9-90fa-6e50d385a71d
 # ╟─d49e8ca6-b8d3-43f3-b44d-83ec59ee70c4
-# ╟─28dba051-1fd8-4ee5-9621-b360f019209c
+# ╠═e06ab4ba-d657-4b57-a6c1-003f8170e7e5
 # ╟─6e054b14-21a6-4386-98ea-9d37a0e4ea88
 # ╠═f63b34b4-7e13-4a22-b7ee-273a939bf508
+# ╠═f7fe093c-4c18-4470-b116-5fe59d7cb46e
 # ╟─14886108-a8d8-4139-8bf5-c4e106723e77
 # ╠═fe30d560-f7fe-4f6c-8560-4bb1b5aced25
 # ╟─f68fce17-e50e-4ca3-9875-9d37e3412eb2
-# ╟─1b887f64-944e-49bb-84c0-a70e81e0d8cd
+# ╠═1b887f64-944e-49bb-84c0-a70e81e0d8cd
 # ╟─6d379883-3912-430d-b03f-40e0752787e5
 # ╟─42f6a7eb-22ec-4438-879e-7cf06982608f
 # ╠═cfa3f294-208a-4e96-ac72-2e7dafbf9e3b
@@ -806,10 +860,11 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─904bddae-3602-4b13-bc13-ffedba08c2f3
 # ╠═e3990510-2d29-457d-b64c-1322ce057a90
 # ╟─df7cc798-3319-4fd7-aea6-19b159589c2a
-# ╠═4d064a97-1ae3-4d82-8d0d-06bfc89c3bf6
+# ╟─4d064a97-1ae3-4d82-8d0d-06bfc89c3bf6
+# ╠═a9a4cfb7-d098-4d52-923e-8165039f4336
 # ╠═b14ad0dd-a3d7-40d7-a2c6-6ba79370a47f
 # ╟─d7255a7c-3438-4986-9b1b-7f8928597c74
-# ╟─a9a4cfb7-d098-4d52-923e-8165039f4336
+# ╠═7a07876d-4e57-4bfc-981b-a15a2772515b
 # ╟─30092553-8edd-4ec8-8f0c-47134e65c4ea
 # ╠═dc6a254a-0ede-4cf6-af1b-d62765b30490
 # ╠═9454430c-c522-4659-b2e1-64f2792a2650
@@ -818,6 +873,7 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─b771c1c0-c282-4dfc-954e-5981ac78164c
 # ╟─a476e231-63c3-4f3f-b89d-5148c33bb316
 # ╠═b130b6fc-17a8-43b9-9e65-78cf1b4f1284
+# ╟─08b18c25-3f80-4c15-9f4d-941339fdf366
 # ╠═ab9f3694-c27b-49ba-9637-96a523b902c1
 # ╟─749a567d-0f32-4914-a658-9b5e794415a1
 # ╠═93fff8c6-03c7-4121-8e3c-7605de96c6cf
@@ -827,5 +883,13 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═e92ccfdf-f374-40ad-8ac8-d55df6b787ec
 # ╟─ba8876c9-26aa-433a-ade7-16b9335ecf72
 # ╟─68e13fff-d841-401a-aa47-72b8c3a344ae
+# ╠═6f9e7229-ff35-4105-a9d6-33d7195e3705
+# ╠═8247c6da-f25b-4ae5-8f77-1a55d514745b
+# ╠═f64861f1-ff00-4010-8af7-8b4165c02d0c
+# ╠═bb419584-d565-46a7-934f-1f9d69555f9b
+# ╠═eb450ea8-9c3f-4303-8b3d-8c878ef0c762
+# ╠═7ff76dcb-59cf-4f9f-aab0-d43d521ad233
+# ╠═6329c754-5c4c-43a2-8ab2-d0436901a2f9
+# ╠═45a4b075-3d78-4c1c-b1a1-0c693f59192d
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
